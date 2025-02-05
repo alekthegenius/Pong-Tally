@@ -11,7 +11,7 @@ import SwiftUI
 struct Pong_TallyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            scoreboardview()
         }
     }
 }
