@@ -8,7 +8,7 @@ An open-source, ad-free, scoreboard app that while designed for Ping Pong, can b
 
 ## Inspiration
 
-Ok, now with all of that marketing jargon out of the way, let me talk about why I made it. Throughout my many years of playing ping-pong its always been a struggle to remember score. So after searching on the App Store for a simple app to keep score, I was shocked to not be able to find one, with most having ads, a clunky UI, and no hands-free mode. So with nothing on the APp Store that fit my needs, I decided to my own instead. Thus PongTally was born.
+Ok, now with all of that marketing jargon out of the way, let me talk about why I made it. Throughout my many years of playing ping-pong its always been a struggle for myself and others to remember scores during an intense match. And so started the quest of searching on the App Store for a simple app to keep score. However I was shocked to not be able to find one, with most having ads, a clunky UI, and no hands-free mode. So with nothing on the App Store that fit my needs, I decided to my own instead. Thus PongTally was born.
 
 ## Roadmap
 
