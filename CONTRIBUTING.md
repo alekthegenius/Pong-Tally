@@ -1,0 +1,1 @@
+If you know Swift or are familiar with iOS development and would like to contribute to this project, then feel free to fork this project and start a pull request! If you don't know where to begin, then here is an excellence resource on contributing to projects: [First-Contributions](https://github.com/firstcontributions/first-contributions)
