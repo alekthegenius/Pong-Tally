@@ -158,7 +158,11 @@ class ScoreboardViewModel: ObservableObject {
                 let command  = result.bestTranscription.formattedString.lowercased()
                 isFinal = result.isFinal
                 print("command: \(command)")
-                self.processCommand(command)
+                
+                if self.speechRecognitionStatus {
+                    self.processCommand(command)
+                }
+                
 
                 
                 
@@ -324,6 +328,7 @@ class ScoreboardViewModel: ObservableObject {
             self.speechRecognitionStatus = false
             self.stopListening()
             lastProcessedCommand = text
+            
             
             
         default:
