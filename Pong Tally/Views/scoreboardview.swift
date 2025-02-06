@@ -96,23 +96,24 @@ struct scoreboardview: View {
                                         Button("Cancel", role: .cancel) { }
                                     }
                                 
-                                Circle()
-                                    .stroke(text1Color, lineWidth: 5)
-                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
-                                    .padding(.trailing, 10)
-                                    .onTapGesture {
-                                        isTeam1ColorEditing = true
-                                    }
-                                    .sheet(isPresented: $isTeam1ColorEditing) {
-                                        ColorPickerView(selectedColor: $viewModel.team1Color)
-                                    }
-                                    .onChange(of: viewModel.team1Color) {
-                                        if isColorWhite(viewModel.team1Color){
-                                            text1Color = .black
-                                        } else {
-                                            text1Color = .white
+                                Button {
+                                    isTeam1ColorEditing = true
+                                } label: {
+                                    Circle()
+                                        .stroke(text1Color, lineWidth: 5)
+                                        .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                        .padding(.trailing, 10)
+                                        .sheet(isPresented: $isTeam1ColorEditing) {
+                                            ColorPickerView(selectedColor: $viewModel.team1Color)
                                         }
-                                    }
+                                        .onChange(of: viewModel.team1Color) {
+                                            if isColorWhite(viewModel.team1Color){
+                                                text1Color = .black
+                                            } else {
+                                                text1Color = .white
+                                            }
+                                        }
+                                }
                                 
                             }
                             .padding()
@@ -179,7 +180,7 @@ struct scoreboardview: View {
                 HStack() {
                     
                     Button {
-                        isHelpMenuShown.toggle()
+                        isHelpMenuShown = true
                     } label: {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
@@ -329,23 +330,24 @@ struct scoreboardview: View {
                                     Button("Cancel", role: .cancel) { }
                                 }
                             
-                            Circle()
-                                .stroke(text2Color, lineWidth: 5)
-                                .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
-                                .padding(.trailing, 10)
-                                .onTapGesture {
-                                    isTeam2ColorEditing = true
-                                }
-                                .sheet(isPresented: $isTeam2ColorEditing) {
-                                    ColorPickerView(selectedColor: $viewModel.team2Color)
-                                }
-                                .onChange(of: viewModel.team2Color) {
-                                    if isColorWhite(viewModel.team2Color){
-                                        text2Color = .black
-                                    } else {
-                                        text2Color = .white
+                            Button() {
+                                isTeam2ColorEditing = true
+                            } label: {
+                                Circle()
+                                    .stroke(text2Color, lineWidth: 5)
+                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                    .padding(.trailing, 10)
+                                    .sheet(isPresented: $isTeam2ColorEditing) {
+                                        ColorPickerView(selectedColor: $viewModel.team2Color)
                                     }
-                                }
+                                    .onChange(of: viewModel.team2Color) {
+                                        if isColorWhite(viewModel.team2Color){
+                                            text2Color = .black
+                                        } else {
+                                            text2Color = .white
+                                        }
+                                    }
+                            }
                             
                         }
                         .padding()
