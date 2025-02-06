@@ -44,6 +44,12 @@ class ScoreboardViewModel: ObservableObject {
     @Published var speechRecognitionStatus: Bool = false
     @Published var speechRecognitionAuthorized: Bool = false
     
+    @Published var gameWinner: Int = 0
+    
+    @Published var showTeam1BackButton = false
+    @Published var showTeam2BackButton = false
+    
+    
     
 
     
@@ -93,6 +99,10 @@ class ScoreboardViewModel: ObservableObject {
     }
     
     func startListening() {
+        print("Start Listening")
+        guard !audioEngine.isRunning else { return }
+        guard speechRecognitionStatus else { return }
+        
         if let recognitionTask = recognitionTask {
             recognitionTask.cancel()
             self.recognitionTask = nil
@@ -126,8 +136,22 @@ class ScoreboardViewModel: ObservableObject {
 
         
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
+            if error != nil {
+                if let error = error{
+                    print("ERROR: \(error.localizedDescription)")
+                    // Handle specific error codes
+                    self.stopListening()
+                    return
+                }
+                
+            }
+            
+            print("Recongition Task Active")
             var isFinal = false
-            print("Start Listening")
+            
+
+            
+            
             if let result = result {
                 // Update the text view with the results.
                 
@@ -142,21 +166,15 @@ class ScoreboardViewModel: ObservableObject {
                 
             }
             
-            if error != nil {
-                //self.stopListening()
-                //self.speechRecognitionStatus = false
-                
-                print("ERROR")
-                print(error ?? "error text")
+           
+            if isFinal {
                 self.stopListening()
                 
-                return
-                
-            } else if isFinal {
-                self.stopListening()
-                
-                self.startListening()
-                
+                DispatchQueue.main.async { // Ensure main thread state access
+                    if self.speechRecognitionStatus {
+                        self.startListening()
+                    }
+                }
                 
             }
         }
@@ -181,7 +199,7 @@ class ScoreboardViewModel: ObservableObject {
     
     func stopListening() {
         print("Stop Listening")
-        
+        self.recognitionTask?.cancel()
 
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
@@ -258,11 +276,36 @@ class ScoreboardViewModel: ObservableObject {
 
         switch newCommand.lowercased() {
         case let str where str.contains("\(convertedTeam1) score"):
+            
             self.increaseTeam1()
+            if (team1Score >= gamePoint){
+                if winByTwo && ((team1Score - team2Score) >= 2){
+                    
+                    gameWinner = 1
+                    gameOver = true
+                    showTeam1BackButton = false
+                    showTeam2BackButton = false
+                } else if !winByTwo {
+                    gameWinner = 1
+                    gameOver = true
+                }
+            }
             lastProcessedCommand = text
             
         case let str where str.contains("\(convertedTeam2) score"):
             self.increaseTeam2()
+            if (team2Score >= gamePoint){
+                if winByTwo && ((team2Score - team1Score) >= 2){
+                    
+                    gameWinner = 2
+                    gameOver = true
+                    showTeam1BackButton = false
+                    showTeam2BackButton = false
+                } else if !winByTwo {
+                    gameWinner = 2
+                    gameOver = true
+                }
+            }
             lastProcessedCommand = text
             
         case let str where str.contains("\(convertedTeam1) loss"):
@@ -275,17 +318,6 @@ class ScoreboardViewModel: ObservableObject {
             
         case let str where str.contains("restart game"):
             self.resetScore()
-            lastProcessedCommand = text
-            
-        case let str where str.contains("set game point to"):
-            if let number = str.components(separatedBy: " ").last {
-                self.gamePoint = Int(number) ?? 21
-            }
-            lastProcessedCommand = text
-            
-        case let str where str.contains("end game"):
-            self.resetScore()
-            gameOver = true
             lastProcessedCommand = text
             
         case let str where str.contains("stop voice commands"):

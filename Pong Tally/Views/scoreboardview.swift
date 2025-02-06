@@ -25,14 +25,13 @@ struct scoreboardview: View {
     @State private var newGamePoint: String = ""
     
 
-    @State private var gameWinner: Int = 0
     
-    @State private var showTeam1BackButton = false
-    
-    @State private var showTeam2BackButton = false
+
     
     @State private var text1Color: Color = .white
     @State private var text2Color: Color = .white
+    
+    @State private var isHelpMenuShown: Bool = false
     
     
     let heavyhapticGenerator = UIImpactFeedbackGenerator(style: .heavy)
@@ -50,19 +49,19 @@ struct scoreboardview: View {
                 heavyhapticGenerator.impactOccurred(intensity: 1)
                 viewModel.increaseTeam1()
                 if viewModel.team1Score > 0 {
-                    showTeam1BackButton = true
+                    viewModel.showTeam1BackButton = true
                 }
                 if (viewModel.team1Score >= viewModel.gamePoint){
                     if viewModel.winByTwo && ((viewModel.team1Score - viewModel.team2Score) >= 2){
                         
-                        gameWinner = 1
-                        showTeam1BackButton = false
-                        showTeam2BackButton = false
+                        viewModel.gameWinner = 1
+                        viewModel.showTeam1BackButton = false
+                        viewModel.showTeam2BackButton = false
                         viewModel.gameOver = true
                     } else if !viewModel.winByTwo {
-                        gameWinner = 1
-                        showTeam1BackButton = false
-                        showTeam2BackButton = false
+                        viewModel.gameWinner = 1
+                        viewModel.showTeam1BackButton = false
+                        viewModel.showTeam2BackButton = false
                         viewModel.gameOver = true
                     }
                 }
@@ -140,19 +139,19 @@ struct scoreboardview: View {
                                     if viewModel.team1Score > 0 {
                                         viewModel.decreaseTeam1()
                                     } else {
-                                        showTeam1BackButton = false
+                                        viewModel.showTeam1BackButton = false
                                     }
                                     
                                     if viewModel.team1Score == 0 {
-                                        showTeam1BackButton = false
+                                        viewModel.showTeam1BackButton = false
                                     }
                                     
                                 } label: {
                                     Image(systemName: "arrowshape.turn.up.backward")
                                         .font(.system(size: 30))
                                         .foregroundStyle(text1Color)
-                                        .opacity(showTeam1BackButton ? 1 : 0.2)
-                                        .disabled(showTeam1BackButton)
+                                        .opacity(viewModel.showTeam1BackButton ? 1 : 0.2)
+                                        .disabled(viewModel.showTeam1BackButton)
                                 }
                                 .padding(.bottom, 20)
                                 .padding(.trailing, 20)
@@ -179,30 +178,39 @@ struct scoreboardview: View {
                 
                 HStack() {
                     
-                    
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.clear)
-                            .strokeBorder(.black, lineWidth: 2)
-                            .frame(width: 100, height: 40)
+                    Button {
+                        isHelpMenuShown.toggle()
+                    } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.clear)
+                                .strokeBorder(.black, lineWidth: 2)
+                                .frame(width: 100, height: 40)
                             
-                        Text("PongTally")
-                            .font(.system(size: 17))
-                            .foregroundColor(Color.black)
-                            .fontWeight(.bold)
-                            .padding()
+                            Text("PongTally")
+                                .font(.system(size: 17))
+                                .foregroundColor(Color.black)
+                                .fontWeight(.bold)
+                                .padding()
+                        }
                     }
+                    .sheet(isPresented: $isHelpMenuShown) {
+                        HelpMenuView()
+                    }
+                    
                     
                     Button {
 
                         if viewModel.speechRecognitionStatus {
+                            viewModel.speechRecognitionStatus.toggle()
                             viewModel.stopListening()
                         } else {
                             if viewModel.speechRecognitionAuthorized {
+                                viewModel.speechRecognitionStatus.toggle()
                                 viewModel.startListening()
                            }
                        }
-                        viewModel.speechRecognitionStatus.toggle()
+                        
                         print(viewModel.speechRecognitionStatus)
 
                     } label: {
@@ -236,8 +244,8 @@ struct scoreboardview: View {
                             .padding()
                     
                     Button {
-                        showTeam1BackButton = false
-                        showTeam2BackButton = false
+                        viewModel.showTeam1BackButton = false
+                        viewModel.showTeam2BackButton = false
                         viewModel.resetScore()
                     } label: {
                         Image(systemName: "arrow.circlepath")
@@ -274,20 +282,20 @@ struct scoreboardview: View {
                 viewModel.increaseTeam2()
                 
                 if viewModel.team2Score > 0 {
-                    showTeam2BackButton = true
+                    viewModel.showTeam2BackButton = true
                 }
                 
                 if (viewModel.team2Score >= viewModel.gamePoint){
                     if viewModel.winByTwo && ((viewModel.team2Score - viewModel.team1Score) >= 2){
                         
-                        gameWinner = 2
-                        showTeam1BackButton = false
-                        showTeam2BackButton = false
+                        viewModel.gameWinner = 2
+                        viewModel.showTeam1BackButton = false
+                        viewModel.showTeam2BackButton = false
                         viewModel.gameOver = true
                     } else if !viewModel.winByTwo {
-                        gameWinner = 2
-                        showTeam1BackButton = false
-                        showTeam2BackButton = false
+                        viewModel.gameWinner = 2
+                        viewModel.showTeam1BackButton = false
+                        viewModel.showTeam2BackButton = false
                         viewModel.gameOver = true
                     }
                 }
@@ -360,19 +368,19 @@ struct scoreboardview: View {
                                 if viewModel.team2Score > 0 {
                                     viewModel.decreaseTeam2()
                                 } else {
-                                    showTeam2BackButton = false
+                                    viewModel.showTeam2BackButton = false
                                 }
                                 
                                 if viewModel.team2Score == 0 {
-                                    showTeam2BackButton = false
+                                    viewModel.showTeam2BackButton = false
                                 }
                                 
                             } label: {
                                 Image(systemName: "arrowshape.turn.up.backward")
                                     .font(.system(size: 30))
                                     .foregroundStyle(text2Color)
-                                    .opacity(showTeam2BackButton ? 1 : 0.2)
-                                    .disabled(showTeam2BackButton)
+                                    .opacity(viewModel.showTeam2BackButton ? 1 : 0.2)
+                                    .disabled(viewModel.showTeam2BackButton)
                             }
                             .padding(.bottom, 20)
                             .padding(.trailing, 20)
@@ -398,7 +406,226 @@ struct scoreboardview: View {
 }
 
 
+struct HelpMenuView: View {
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        ZStack {
+            Color.white
+                .ignoresSafeArea()
+            
+            VStack {
+                HStack() {
+                    Text("PongTally")
+                        .font(.system(size: 40))
+                        .fontWeight(.bold)
+                        .padding(.top, 25)
+                        .foregroundStyle(LinearGradient(colors: [.blue, .red], startPoint: .leading, endPoint: .trailing))
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 3, y: 3)
+                    
+                    Image("PongTallyIcon")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 85, height: 85)
+                        .padding(.top, 25)
+                        .padding(.leading, 10)
+                        
+                        
+                }
+                
+                
+                
+                    
 
+                    
+                ScrollView() {
+                    VStack(alignment: HorizontalAlignment.leading, spacing: 10) {
+                        buttonContentRow()
+                            .foregroundStyle(.black)
+                    }
+                    
+                }
+                
+                HStack {
+                    Button {
+                        presentationMode.wrappedValue.dismiss()
+                    } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(Color.clear)
+                                .stroke(.black, lineWidth: 2)
+                            
+                            Text("Dismiss")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(.black)
+                        }
+                    }
+                    
+                }
+                .frame(width: 100, height: 40)
+                .padding(.bottom, 15)
+                
+                
+                Spacer()
+                
+                Divider()
+                ScrollView(.horizontal) {
+                    Text("                 Written From Texas with ❤️, © 2025 Alek Vasek                                                                                                                                                                                                                                                                                   Never                                                                           Gonna                                                                           Give                                                                             You                                                                            Up 😉                                                ")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                        
+                }
+                .scrollIndicators(.never)
+                
+                
+                    
+                Text("Version 1.1")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+            }
+            .padding(.horizontal, 10)
+        }
+        .onDisappear {
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
+    @ViewBuilder
+    func buttonContentRow() -> some View {
+        HStack {
+            Text("Buttons:")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.black)
+            
+            Spacer()
+        }
+        
+        HStack() {
+                Image(systemName: "microphone")
+                .font(.system(size: 20))
+
+                
+                Text("Toggles On and Off Voice Commands")
+                .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+                
+            }
+        
+        Divider()
+        
+        HStack {
+                Image(systemName: "trophy")
+                .font(.system(size: 20))
+     
+                Text("Sets the Winning Point for the Teams to Play To")
+                .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+           
+            }
+            
+        Divider()
+        
+        HStack {
+                Image(systemName: "arrow.circlepath")
+                .font(.system(size: 20))
+
+                Text("Resets Both of the Team's Scores to Zero")
+                .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+              
+            }
+        
+        Divider()
+            
+        HStack {
+                Image(systemName: "circlebadge.2.fill")
+                .font(.system(size: 20))
+            
+                Text("Duce Mode: Players Have to Win By Two Points")
+                .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+
+            }
+        
+        Divider()
+        
+        HStack {
+            Text("Voice Commands:")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.black)
+                .padding(.top, 15)
+            
+            Spacer()
+        }
+        
+        
+        
+        VStack(alignment: .leading) {
+            HStack {
+                Text("'teamName' score:")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+                Text("Add a point to the dictacted team")
+                    .font(.system(size: 15))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+                
+            }
+            
+            Divider()
+            
+            
+            HStack {
+                Text("'teamName' loss:")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+                Text("Remove a point from the dictacted team")
+                    .font(.system(size: 15))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+            }
+            
+            
+            Divider()
+            
+            HStack {
+                Text("restart score:")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+                Text("Reset both of the teams scores to zero")
+                    .font(.system(size: 15))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+            }
+            
+            
+            Divider()
+            
+            HStack {
+                Text("stop voice commands:")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+                Text("Stop listening for voice commands")
+                    .font(.system(size: 15))
+                    .foregroundStyle(.black)
+                    .padding(.vertical, 5)
+            }
+            
+           
+            Divider()
+                
+                
+            }
+        
+        
+
+        }
+    
+    
+}
 
 struct ColorPickerView: View {
     @Binding var selectedColor: Color
