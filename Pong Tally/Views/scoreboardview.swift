@@ -472,7 +472,7 @@ struct HelpMenuView: View {
                 
                 Divider()
                 ScrollView(.horizontal) {
-                    Text("                 Written From Texas with ❤️, © 2025 Alek Vasek                                                                                                                                                                                                                                                                                   Never                                                                           Gonna                                                                           Give                                                                             You                                                                            Up 😉                                                ")
+                    Text("                 Written From Texas with ❤️, © 2025 Alek Vasek                                                                                                                                                                                                                                                                                                                                                              Never                                                                           Gonna                                                                           Give                                                                             You                                                                            Up 😉                                                ")
                         .font(.caption)
                         .foregroundStyle(.gray)
                         
@@ -481,7 +481,7 @@ struct HelpMenuView: View {
                 
                 
                     
-                Text("Version 1.1")
+                Text("Version \(getAppVersion())")
                     .font(.caption)
                     .foregroundStyle(.gray)
             }
@@ -627,6 +627,8 @@ struct HelpMenuView: View {
         }
     
     
+    
+    
 }
 
 struct ColorPickerView: View {
@@ -762,6 +764,13 @@ func isColorWhite(_ color: Color) -> Bool {
     
 
 }
+
+func getAppVersion() -> String {
+        if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            return appVersion
+        }
+        return "Unknown"
+    }
 
 #Preview {
     scoreboardview()
