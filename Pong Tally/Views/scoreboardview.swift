@@ -592,7 +592,7 @@ struct HelpMenuView: View {
             Divider()
             
             HStack {
-                Text("restart score:")
+                Text("restart game:")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(.black)
                     .padding(.vertical, 5)
