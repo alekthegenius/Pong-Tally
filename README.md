@@ -1,3 +1,4 @@
+![PongTallyLogo](https://github.com/alekthegenius/Pong-Tally/blob/main/pong-tally-repo-logo.png)
 # PongTally
 **An App to Keep Score for your Ping Pong Matches**
 
