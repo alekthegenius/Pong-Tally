@@ -25,11 +25,7 @@ struct scoreboardview: View {
     @State private var newGamePoint: String = ""
     
 
-    
 
-    
-    @State private var text1Color: Color = .white
-    @State private var text2Color: Color = .white
     
     @State private var isHelpMenuShown: Bool = false
     
@@ -78,7 +74,7 @@ struct scoreboardview: View {
                                 Text("\(viewModel.team1Name)")
                                     .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
                                     .fontWeight(.bold)
-                                    .foregroundStyle(text1Color)
+                                    .foregroundStyle(viewModel.text1Color)
                                     .font(.system(size:40))
                                     .minimumScaleFactor(0.5)
                                     .lineLimit(1)
@@ -100,18 +96,11 @@ struct scoreboardview: View {
                                     isTeam1ColorEditing = true
                                 } label: {
                                     Circle()
-                                        .stroke(text1Color, lineWidth: 5)
+                                        .stroke(viewModel.text1Color, lineWidth: 5)
                                         .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
                                         .padding(.trailing, 10)
                                         .sheet(isPresented: $isTeam1ColorEditing) {
-                                            ColorPickerView(selectedColor: $viewModel.team1Color)
-                                        }
-                                        .onChange(of: viewModel.team1Color) {
-                                            if isColorWhite(viewModel.team1Color){
-                                                text1Color = .black
-                                            } else {
-                                                text1Color = .white
-                                            }
+                                            ColorPickerView(selectedBackgroundColor: $viewModel.team1Color, selectedTextColor: $viewModel.text1Color)
                                         }
                                 }
                                 
@@ -121,7 +110,7 @@ struct scoreboardview: View {
                             Spacer()
                             Text("\(viewModel.team1Score)")
                                 .fontWeight(.heavy)
-                                .foregroundStyle(text1Color)
+                                .foregroundStyle(viewModel.text1Color)
                                 .font(.system(size:80))
                             
                             
@@ -150,7 +139,7 @@ struct scoreboardview: View {
                                 } label: {
                                     Image(systemName: "arrowshape.turn.up.backward")
                                         .font(.system(size: 30))
-                                        .foregroundStyle(text1Color)
+                                        .foregroundStyle(viewModel.text1Color)
                                         .opacity(viewModel.showTeam1BackButton ? 1 : 0.2)
                                         .disabled(viewModel.showTeam1BackButton)
                                 }
@@ -312,7 +301,7 @@ struct scoreboardview: View {
                             Text("\(viewModel.team2Name)")
                                 .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
                                 .fontWeight(.bold)
-                                .foregroundStyle(text2Color)
+                                .foregroundStyle(viewModel.text2Color)
                                 .font(.system(size:40))
                                 .minimumScaleFactor(0.5)
                                 .lineLimit(1)
@@ -334,18 +323,11 @@ struct scoreboardview: View {
                                 isTeam2ColorEditing = true
                             } label: {
                                 Circle()
-                                    .stroke(text2Color, lineWidth: 5)
+                                    .stroke(viewModel.text2Color, lineWidth: 5)
                                     .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
                                     .padding(.trailing, 10)
                                     .sheet(isPresented: $isTeam2ColorEditing) {
-                                        ColorPickerView(selectedColor: $viewModel.team2Color)
-                                    }
-                                    .onChange(of: viewModel.team2Color) {
-                                        if isColorWhite(viewModel.team2Color){
-                                            text2Color = .black
-                                        } else {
-                                            text2Color = .white
-                                        }
+                                        ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
                                     }
                             }
                             
@@ -355,7 +337,7 @@ struct scoreboardview: View {
                         Spacer()
                         Text("\(viewModel.team2Score)")
                             .fontWeight(.heavy)
-                            .foregroundStyle(text2Color)
+                            .foregroundStyle(viewModel.text2Color)
                             .font(.system(size:80))
                         
                         
@@ -380,7 +362,7 @@ struct scoreboardview: View {
                             } label: {
                                 Image(systemName: "arrowshape.turn.up.backward")
                                     .font(.system(size: 30))
-                                    .foregroundStyle(text2Color)
+                                    .foregroundStyle(viewModel.text2Color)
                                     .opacity(viewModel.showTeam2BackButton ? 1 : 0.2)
                                     .disabled(viewModel.showTeam2BackButton)
                             }
@@ -471,13 +453,10 @@ struct HelpMenuView: View {
                 Spacer()
                 
                 Divider()
-                ScrollView(.horizontal) {
-                    Text("                 Written From Texas with ❤️, © 2025 Alek Vasek                                                                                                                                                                                                                                                                                                                                                              Never                                                                           Gonna                                                                           Give                                                                             You                                                                            Up 😉                                                ")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
+                Text("Written From Texas with ❤️, © 2025 Alek Vasek")
+                    .font(.caption)
+                    .foregroundStyle(.gray)
                         
-                }
-                .scrollIndicators(.never)
                 
                 
                     
@@ -632,7 +611,8 @@ struct HelpMenuView: View {
 }
 
 struct ColorPickerView: View {
-    @Binding var selectedColor: Color
+    @Binding var selectedBackgroundColor: Color
+    @Binding var selectedTextColor: Color
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -640,13 +620,20 @@ struct ColorPickerView: View {
             Color.white
                 .ignoresSafeArea()
             VStack {
-                Text("Select Team Color")
+                Text("Change Colors")
                     .font(.system(size: 40))
                     .fontWeight(.bold)
                     .padding()
                     .foregroundStyle(.black)
                 
-                ColorPicker("Choose a color", selection: $selectedColor)
+                ColorPicker("Choose a Background Color", selection: $selectedBackgroundColor)
+                    .padding()
+                    .font(.system(size: 25))
+                    .foregroundStyle(.black)
+                
+                Divider()
+                
+                ColorPicker("Choose a Text Color", selection: $selectedTextColor)
                     .padding()
                     .font(.system(size: 25))
                     .foregroundStyle(.black)

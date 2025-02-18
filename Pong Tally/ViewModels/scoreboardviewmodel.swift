@@ -49,6 +49,9 @@ class ScoreboardViewModel: ObservableObject {
     @Published var showTeam1BackButton = false
     @Published var showTeam2BackButton = false
     
+    @Published var text1Color: Color = .white
+    @Published var text2Color: Color = .white
+    
     
     
 
