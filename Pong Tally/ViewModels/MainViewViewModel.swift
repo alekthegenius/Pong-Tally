@@ -1,5 +1,5 @@
 //
-//  scoreboardviewmodel.swift
+//  MainViewViewModel.swift.swift
 //  Pong Tally
 //
 //  Created by Alek Vasek on 1/12/25.
@@ -10,7 +10,7 @@ import SwiftUICore
 import Speech
 import SwiftUI
 
-class ScoreboardViewModel: ObservableObject {
+class MainViewViewModel: ObservableObject {
     
     
     private let speechRecognizer = SFSpeechRecognizer()

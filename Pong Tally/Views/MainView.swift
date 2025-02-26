@@ -1,5 +1,5 @@
 //
-//  scoreboardview.swift
+//  MainView.swift
 //  Pong Tally
 //
 //  Created by Alek Vasek on 1/12/25.
@@ -9,9 +9,9 @@ import SwiftUI
 import ConfettiSwiftUI
 
 
-struct scoreboardview: View {
+struct MainView: View {
     
-    @StateObject var viewModel = ScoreboardViewModel()
+    @StateObject var viewModel = MainViewViewModel()
     
     @State private var newTeamName: String = ""
     
@@ -664,7 +664,7 @@ struct ColorPickerView: View {
 
 
 struct GameOverView: View {
-    @EnvironmentObject var viewModel: ScoreboardViewModel
+    @EnvironmentObject var viewModel: MainViewViewModel
     @Environment(\.presentationMode) var presentationMode
     @State private var confettiCounter = 0
     
@@ -760,5 +760,5 @@ func getAppVersion() -> String {
     }
 
 #Preview {
-    scoreboardview()
+    MainView()
 }
