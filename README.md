@@ -16,7 +16,7 @@ Ok, now with all of that marketing jargon out of the way, let me talk about why 
  - [x] Program Game Logic
  - [X] Create Voice-Recognition
  - [ ] Finalize and Launch on the App Store
- - [ ] Create Version 2, with a Tournament Mode, with brackets, and game logs.
+ - [ ] Create Version 2, with a Tournament Mode, with brackets, serve tracker, and game logs.
 
 ## Contributing
 
