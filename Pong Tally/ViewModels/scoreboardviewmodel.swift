@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUICore
 import Speech
+import SwiftUI
 
 class ScoreboardViewModel: ObservableObject {
     
@@ -32,8 +33,8 @@ class ScoreboardViewModel: ObservableObject {
     @Published var team1Name: String = "Team 1"
     @Published var team2Name: String = "Team 2"
     
-    @Published var team1Color: Color = Color.red
-    @Published var team2Color: Color = Color.blue
+    @Published var team1Color: Color = Color(UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0))
+    @Published var team2Color: Color = Color(UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0))
     
     
     @Published var gamePoint: Int = 11
@@ -49,8 +50,8 @@ class ScoreboardViewModel: ObservableObject {
     @Published var showTeam1BackButton = false
     @Published var showTeam2BackButton = false
     
-    @Published var text1Color: Color = .white
-    @Published var text2Color: Color = .white
+    @Published var text1Color: Color = Color(UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0))
+    @Published var text2Color: Color = Color(UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0))
     
     
     
