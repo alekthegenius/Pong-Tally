@@ -53,6 +53,8 @@ class MainViewViewModel: ObservableObject {
     @Published var text1Color: Color = Color(UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0))
     @Published var text2Color: Color = Color(UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0))
     
+    @Published var dictatedText: String = ""
+    
     
     
 
@@ -137,7 +139,7 @@ class MainViewViewModel: ObservableObject {
             return
         }
         
-
+        
         
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
             if error != nil {
@@ -164,6 +166,7 @@ class MainViewViewModel: ObservableObject {
                 print("command: \(command)")
                 
                 if self.speechRecognitionStatus {
+                    
                     self.processCommand(command)
                 }
                 
@@ -229,6 +232,7 @@ class MainViewViewModel: ObservableObject {
         stopListening()
         startListening()
         lastProcessedCommand = ""
+        
     }
     
     func requestSpeechAuthorization() {
@@ -265,7 +269,15 @@ class MainViewViewModel: ObservableObject {
         
         let newCommand = text.replacingOccurrences(of: lastProcessedCommand, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
         
+        
         guard !newCommand.isEmpty else { return }
+        
+        let lastWord = newCommand.split(separator: " ").last
+        
+        
+        dictatedText.append(" " + (lastWord ?? "") + " ")
+        
+        
         
         
         print("Processing new command: \(newCommand)")
@@ -300,6 +312,7 @@ class MainViewViewModel: ObservableObject {
             }
             lastProcessedCommand = text
             
+            
         case let str where str.contains("\(convertedTeam2) score"):
             self.increaseTeam2()
             if (team2Score >= gamePoint){
@@ -316,22 +329,27 @@ class MainViewViewModel: ObservableObject {
             }
             lastProcessedCommand = text
             
+            
         case let str where str.contains("\(convertedTeam1) loss"):
             self.decreaseTeam1()
             lastProcessedCommand = text
+            
             
         case let str where str.contains("\(convertedTeam2) loss"):
             self.decreaseTeam2()
             lastProcessedCommand = text
             
+            
         case let str where str.contains("restart game"):
             self.resetScore()
             lastProcessedCommand = text
+            
             
         case let str where str.contains("stop voice commands"):
             self.speechRecognitionStatus = false
             self.stopListening()
             lastProcessedCommand = text
+            
             
             
             

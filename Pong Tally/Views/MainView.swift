@@ -39,36 +39,37 @@ struct MainView: View {
     var body: some View {
         
         
-        VStack() {
-            Button {
-                //
-                heavyhapticGenerator.impactOccurred(intensity: 1)
-                viewModel.increaseTeam1()
-                if viewModel.team1Score > 0 {
-                    viewModel.showTeam1BackButton = true
-                }
-                if (viewModel.team1Score >= viewModel.gamePoint){
-                    if viewModel.winByTwo && ((viewModel.team1Score - viewModel.team2Score) >= 2){
-                        
-                        viewModel.gameWinner = 1
-                        viewModel.showTeam1BackButton = false
-                        viewModel.showTeam2BackButton = false
-                        viewModel.gameOver = true
-                    } else if !viewModel.winByTwo {
-                        viewModel.gameWinner = 1
-                        viewModel.showTeam1BackButton = false
-                        viewModel.showTeam2BackButton = false
-                        viewModel.gameOver = true
+        ZStack {
+            VStack() {
+                Button {
+                    //
+                    heavyhapticGenerator.impactOccurred(intensity: 1)
+                    viewModel.increaseTeam1()
+                    if viewModel.team1Score > 0 {
+                        viewModel.showTeam1BackButton = true
                     }
-                }
-
-            } label: {
-                ZStack() {
+                    if (viewModel.team1Score >= viewModel.gamePoint){
+                        if viewModel.winByTwo && ((viewModel.team1Score - viewModel.team2Score) >= 2){
+                            
+                            viewModel.gameWinner = 1
+                            viewModel.showTeam1BackButton = false
+                            viewModel.showTeam2BackButton = false
+                            viewModel.gameOver = true
+                        } else if !viewModel.winByTwo {
+                            viewModel.gameWinner = 1
+                            viewModel.showTeam1BackButton = false
+                            viewModel.showTeam2BackButton = false
+                            viewModel.gameOver = true
+                        }
+                    }
                     
-                    Rectangle()
-                        .fill(viewModel.team1Color)
-                        .ignoresSafeArea()
-                    
+                } label: {
+                    ZStack() {
+                        
+                        Rectangle()
+                            .fill(viewModel.team1Color)
+                            .ignoresSafeArea()
+                        
                         VStack() {
                             HStack() {
                                 Text("\(viewModel.team1Name)")
@@ -120,7 +121,7 @@ struct MainView: View {
                             
                         }
                         .padding(.top, 20)
-                    
+                        
                         VStack{
                             Spacer()
                             HStack {
@@ -153,68 +154,68 @@ struct MainView: View {
                     
                 }
                 
-               
                 
                 
-        
-                
-            // Middle Menu Bar
-            
-            ZStack() {
-                Rectangle()
-                    .fill(.white)
-                    .frame(maxHeight: 30)
                 
                 
-                HStack() {
-                    
-                    Button {
-                        isHelpMenuShown = true
-                    } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(.clear)
-                                .strokeBorder(.black, lineWidth: 2)
-                                .frame(width: 100, height: 40)
-                            
-                            Text("PongTally")
-                                .font(.system(size: 17))
-                                .foregroundColor(Color.black)
-                                .fontWeight(.bold)
-                                .padding()
-                        }
-                    }
-                    .sheet(isPresented: $isHelpMenuShown) {
-                        HelpMenuView()
-                    }
+                
+                // Middle Menu Bar
+                
+                ZStack() {
+                    Rectangle()
+                        .fill(.white)
+                        .frame(maxHeight: 30)
                     
                     
-                    Button {
-
-                        if viewModel.speechRecognitionStatus {
-                            viewModel.speechRecognitionStatus.toggle()
-                            viewModel.stopListening()
-                        } else {
-                            if viewModel.speechRecognitionAuthorized {
-                                viewModel.speechRecognitionStatus.toggle()
-                                viewModel.startListening()
-                           }
-                       }
+                    HStack() {
                         
-                        print(viewModel.speechRecognitionStatus)
-
-                    } label: {
-                        Image(systemName: (viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized) ? "microphone.fill" : "microphone.slash")
+                        Button {
+                            isHelpMenuShown = true
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(.clear)
+                                    .strokeBorder(.black, lineWidth: 2)
+                                    .frame(width: 100, height: 40)
+                                
+                                Text("PongTally")
+                                    .font(.system(size: 17))
+                                    .foregroundColor(Color.black)
+                                    .fontWeight(.bold)
+                                    .padding()
+                            }
+                        }
+                        .sheet(isPresented: $isHelpMenuShown) {
+                            HelpMenuView()
+                        }
+                        
+                        
+                        Button {
+                            
+                            if viewModel.speechRecognitionStatus {
+                                viewModel.speechRecognitionStatus.toggle()
+                                viewModel.stopListening()
+                            } else {
+                                if viewModel.speechRecognitionAuthorized {
+                                    viewModel.speechRecognitionStatus.toggle()
+                                    viewModel.startListening()
+                                }
+                            }
+                            
+                            print(viewModel.speechRecognitionStatus)
+                            
+                        } label: {
+                            Image(systemName: (viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized) ? "microphone.fill" : "microphone.slash")
                                 .font(.system(size: 25))
                                 .foregroundColor(Color.black)
+                            
+                        }
+                        .padding()
+                        .opacity(viewModel.speechRecognitionAuthorized ? 1 : 0.5)
+                        .disabled(!viewModel.speechRecognitionAuthorized)
                         
-                    }
-                    .padding()
-                    .opacity(viewModel.speechRecognitionAuthorized ? 1 : 0.5)
-                    .disabled(!viewModel.speechRecognitionAuthorized)
-                    
-                    
-                    Image(systemName: "trophy")
+                        
+                        Image(systemName: "trophy")
                             .font(.system(size: 25))
                             .foregroundColor(Color.black)
                             .onTapGesture {
@@ -232,160 +233,179 @@ struct MainView: View {
                                 Button("Cancel", role: .cancel) { }
                             }
                             .padding()
-                    
-                    Button {
-                        viewModel.showTeam1BackButton = false
-                        viewModel.showTeam2BackButton = false
-                        viewModel.resetScore()
-                    } label: {
-                        Image(systemName: "arrow.circlepath")
-                            .font(.system(size: 25))
-                            .foregroundColor(Color.black)
-                    }
-                    .padding()
-                    
-                    Button {
-                        viewModel.winByTwo.toggle()
-                    } label: {
-                        if viewModel.winByTwo {
-                            Image(systemName: "circlebadge.2.fill")
+                        
+                        Button {
+                            viewModel.showTeam1BackButton = false
+                            viewModel.showTeam2BackButton = false
+                            viewModel.resetScore()
+                        } label: {
+                            Image(systemName: "arrow.circlepath")
                                 .font(.system(size: 25))
                                 .foregroundColor(Color.black)
-                                .padding()
-                        } else {
-                            Image(systemName: "circlebadge.2")
-                                .font(.system(size: 25))
-                                .foregroundColor(Color.black)
-                                .padding()
-                        }
-                        
-                    }
-                    
-                }
-                
-
-            }
-            
-            Button {
-                //
-                heavyhapticGenerator.impactOccurred(intensity: 1)
-                viewModel.increaseTeam2()
-                
-                if viewModel.team2Score > 0 {
-                    viewModel.showTeam2BackButton = true
-                }
-                
-                if (viewModel.team2Score >= viewModel.gamePoint){
-                    if viewModel.winByTwo && ((viewModel.team2Score - viewModel.team1Score) >= 2){
-                        
-                        viewModel.gameWinner = 2
-                        viewModel.showTeam1BackButton = false
-                        viewModel.showTeam2BackButton = false
-                        viewModel.gameOver = true
-                    } else if !viewModel.winByTwo {
-                        viewModel.gameWinner = 2
-                        viewModel.showTeam1BackButton = false
-                        viewModel.showTeam2BackButton = false
-                        viewModel.gameOver = true
-                    }
-                }
-                
-            } label: {
-                ZStack() {
-                    
-                    Rectangle()
-                        .fill(viewModel.team2Color)
-                        .ignoresSafeArea()
-                    VStack(alignment: HorizontalAlignment.center) {
-                        HStack() {
-                            Text("\(viewModel.team2Name)")
-                                .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
-                                .fontWeight(.bold)
-                                .foregroundStyle(viewModel.text2Color)
-                                .font(.system(size:40))
-                                .minimumScaleFactor(0.5)
-                                .lineLimit(1)
-                                .onTapGesture {
-                                    newTeamName = viewModel.team2Name
-                                    isTeam2TitleEditing = true
-                                }
-                                .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
-                                    TextField("Enter new team name", text: $newTeamName)
-                                    Button("Save") {
-                                        if !newTeamName.isEmpty {
-                                            viewModel.team2Name = newTeamName
-                                        }
-                                    }
-                                    Button("Cancel", role: .cancel) { }
-                                }
-                            
-                            Button() {
-                                isTeam2ColorEditing = true
-                            } label: {
-                                Circle()
-                                    .stroke(viewModel.text2Color, lineWidth: 5)
-                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
-                                    .padding(.trailing, 10)
-                                    .sheet(isPresented: $isTeam2ColorEditing) {
-                                        ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
-                                    }
-                            }
-                            
                         }
                         .padding()
                         
-                        Spacer()
-                        Text("\(viewModel.team2Score)")
-                            .fontWeight(.heavy)
-                            .foregroundStyle(viewModel.text2Color)
-                            .font(.system(size:80))
+                        Button {
+                            viewModel.winByTwo.toggle()
+                        } label: {
+                            if viewModel.winByTwo {
+                                Image(systemName: "circlebadge.2.fill")
+                                    .font(.system(size: 25))
+                                    .foregroundColor(Color.black)
+                                    .padding()
+                            } else {
+                                Image(systemName: "circlebadge.2")
+                                    .font(.system(size: 25))
+                                    .foregroundColor(Color.black)
+                                    .padding()
+                            }
+                            
+                        }
                         
-                        
-                        Spacer()
                     }
                     
-                    VStack{
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Button {
-                                if viewModel.team2Score > 0 {
-                                    viewModel.decreaseTeam2()
-                                } else {
-                                    viewModel.showTeam2BackButton = false
-                                }
-                                
-                                if viewModel.team2Score == 0 {
-                                    viewModel.showTeam2BackButton = false
-                                }
-                                
-                            } label: {
-                                Image(systemName: "arrowshape.turn.up.backward")
-                                    .font(.system(size: 30))
-                                    .foregroundStyle(viewModel.text2Color)
-                                    .opacity(viewModel.showTeam2BackButton ? 1 : 0.2)
-                                    .disabled(viewModel.showTeam2BackButton)
-                            }
-                            .padding(.bottom, 20)
-                            .padding(.trailing, 20)
+                    
+                }
+                
+                Button {
+                    //
+                    heavyhapticGenerator.impactOccurred(intensity: 1)
+                    viewModel.increaseTeam2()
+                    
+                    if viewModel.team2Score > 0 {
+                        viewModel.showTeam2BackButton = true
+                    }
+                    
+                    if (viewModel.team2Score >= viewModel.gamePoint){
+                        if viewModel.winByTwo && ((viewModel.team2Score - viewModel.team1Score) >= 2){
+                            
+                            viewModel.gameWinner = 2
+                            viewModel.showTeam1BackButton = false
+                            viewModel.showTeam2BackButton = false
+                            viewModel.gameOver = true
+                        } else if !viewModel.winByTwo {
+                            viewModel.gameWinner = 2
+                            viewModel.showTeam1BackButton = false
+                            viewModel.showTeam2BackButton = false
+                            viewModel.gameOver = true
                         }
                     }
                     
+                } label: {
+                    ZStack() {
+                        
+                        Rectangle()
+                            .fill(viewModel.team2Color)
+                            .ignoresSafeArea()
+                        VStack(alignment: HorizontalAlignment.center) {
+                            HStack() {
+                                Text("\(viewModel.team2Name)")
+                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(viewModel.text2Color)
+                                    .font(.system(size:40))
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                                    .onTapGesture {
+                                        newTeamName = viewModel.team2Name
+                                        isTeam2TitleEditing = true
+                                    }
+                                    .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
+                                        TextField("Enter new team name", text: $newTeamName)
+                                        Button("Save") {
+                                            if !newTeamName.isEmpty {
+                                                viewModel.team2Name = newTeamName
+                                            }
+                                        }
+                                        Button("Cancel", role: .cancel) { }
+                                    }
+                                
+                                Button() {
+                                    isTeam2ColorEditing = true
+                                } label: {
+                                    Circle()
+                                        .stroke(viewModel.text2Color, lineWidth: 5)
+                                        .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                        .padding(.trailing, 10)
+                                        .sheet(isPresented: $isTeam2ColorEditing) {
+                                            ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
+                                        }
+                                }
+                                
+                            }
+                            .padding()
+                            
+                            Spacer()
+                            Text("\(viewModel.team2Score)")
+                                .fontWeight(.heavy)
+                                .foregroundStyle(viewModel.text2Color)
+                                .font(.system(size:80))
+                            
+                            
+                            Spacer()
+                        }
+                        
+                        VStack{
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Button {
+                                    if viewModel.team2Score > 0 {
+                                        viewModel.decreaseTeam2()
+                                    } else {
+                                        viewModel.showTeam2BackButton = false
+                                    }
+                                    
+                                    if viewModel.team2Score == 0 {
+                                        viewModel.showTeam2BackButton = false
+                                    }
+                                    
+                                } label: {
+                                    Image(systemName: "arrowshape.turn.up.backward")
+                                        .font(.system(size: 30))
+                                        .foregroundStyle(viewModel.text2Color)
+                                        .opacity(viewModel.showTeam2BackButton ? 1 : 0.2)
+                                        .disabled(viewModel.showTeam2BackButton)
+                                }
+                                .padding(.bottom, 20)
+                                .padding(.trailing, 20)
+                            }
+                        }
+                        
+                        
+                        
+                    }
+                }
+                .onAppear {
+                    heavyhapticGenerator.prepare() // Required for immediate feedback
+                }
+                
+                
+                
+            }
+            .background(.white)
+            .sheet(isPresented: $viewModel.gameOver) {
+                GameOverView()
+                    .environmentObject(viewModel)
+            }
+            
+            if viewModel.speechRecognitionStatus == true {
                 
                     
-                }
-            }
-            .onAppear {
-                heavyhapticGenerator.prepare() // Required for immediate feedback
+                SpeechRecognitionView(viewModel: viewModel)
+                    
+            
+                
             }
             
         }
-        .background(.white)
-        .sheet(isPresented: $viewModel.gameOver) {
-            GameOverView()
-                .environmentObject(viewModel)
-        }
+        
+        
+        
+       
     }
+    
+    
     
 }
 
