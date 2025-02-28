@@ -61,6 +61,7 @@ class MainViewViewModel: ObservableObject {
     
     init() {
         requestSpeechAuthorization()
+        UIApplication.shared.isIdleTimerDisabled = true
 
     }
     

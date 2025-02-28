@@ -24,8 +24,9 @@ struct MainView: View {
     @State private var isGamePointEditing: Bool = false
     @State private var newGamePoint: String = ""
     
-
-
+    @State private var isSettingsMenuShown: Bool = false
+    
+    @State private var showDictationText: Bool = true
     
     @State private var isHelpMenuShown: Bool = false
     
@@ -72,26 +73,28 @@ struct MainView: View {
                         
                         VStack() {
                             HStack() {
-                                Text("\(viewModel.team1Name)")
-                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(viewModel.text1Color)
-                                    .font(.system(size:40))
-                                    .minimumScaleFactor(0.5)
-                                    .lineLimit(1)
-                                    .onTapGesture {
-                                        newTeamName = viewModel.team1Name
-                                        isTeam1TitleEditing = true
-                                    }
-                                    .alert("Change Team Name", isPresented: $isTeam1TitleEditing) {
-                                        TextField("Enter new team name", text: $newTeamName)
-                                        Button("Save") {
-                                            if !newTeamName.isEmpty {
-                                                viewModel.team1Name = newTeamName
-                                            }
+                                Button {
+                                    newTeamName = viewModel.team1Name
+                                    isTeam1TitleEditing = true
+                                } label:{
+                                    Text("\(viewModel.team1Name)")
+                                        .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(viewModel.text1Color)
+                                        .font(.system(size:40))
+                                        .minimumScaleFactor(0.5)
+                                        .lineLimit(1)
+                                        
+                                }
+                                .alert("Change Team Name", isPresented: $isTeam1TitleEditing) {
+                                    TextField("Enter new team name", text: $newTeamName)
+                                    Button("Save") {
+                                        if !newTeamName.isEmpty {
+                                            viewModel.team1Name = newTeamName
                                         }
-                                        Button("Cancel", role: .cancel) { }
                                     }
+                                    Button("Cancel", role: .cancel) { }
+                                }
                                 
                                 Button {
                                     isTeam1ColorEditing = true
@@ -189,6 +192,19 @@ struct MainView: View {
                             HelpMenuView()
                         }
                         
+                        Button {
+                            isSettingsMenuShown = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 25))
+                                .foregroundColor(Color.black)
+                                .padding()
+                        }
+                        .sheet(isPresented: $isSettingsMenuShown) {
+                            SettingsView(isGamePointEditing: $isGamePointEditing, newGamePoint: $newGamePoint, showDictationText: $showDictationText)
+                                .environmentObject(viewModel)
+                        }
+                        
                         
                         Button {
                             
@@ -215,24 +231,8 @@ struct MainView: View {
                         .disabled(!viewModel.speechRecognitionAuthorized)
                         
                         
-                        Image(systemName: "trophy")
-                            .font(.system(size: 25))
-                            .foregroundColor(Color.black)
-                            .onTapGesture {
-                                isGamePointEditing = true
-                            }
-                            .alert("Set Game Point", isPresented: $isGamePointEditing) {
-                                TextField("Current Game Point: \(viewModel.gamePoint)", text: $newGamePoint)
-                                    .keyboardType(.numberPad) // Numeric keyboard
-                                    .padding()
-                                Button("Save") {
-                                    if !newGamePoint.isEmpty || !(Int(newGamePoint) ?? 21 <= viewModel.team1Score) || !(Int(newGamePoint) ?? 21 <= viewModel.team2Score) {
-                                        viewModel.gamePoint = Int(newGamePoint) ?? 21
-                                    }
-                                }
-                                Button("Cancel", role: .cancel) { }
-                            }
-                            .padding()
+                        
+                        
                         
                         Button {
                             viewModel.showTeam1BackButton = false
@@ -299,26 +299,28 @@ struct MainView: View {
                             .ignoresSafeArea()
                         VStack(alignment: HorizontalAlignment.center) {
                             HStack() {
-                                Text("\(viewModel.team2Name)")
-                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
-                                    .fontWeight(.bold)
-                                    .foregroundStyle(viewModel.text2Color)
-                                    .font(.system(size:40))
-                                    .minimumScaleFactor(0.5)
-                                    .lineLimit(1)
-                                    .onTapGesture {
-                                        newTeamName = viewModel.team2Name
-                                        isTeam2TitleEditing = true
-                                    }
-                                    .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
-                                        TextField("Enter new team name", text: $newTeamName)
-                                        Button("Save") {
-                                            if !newTeamName.isEmpty {
-                                                viewModel.team2Name = newTeamName
-                                            }
+                                Button {
+                                    newTeamName = viewModel.team2Name
+                                    isTeam2TitleEditing = true
+                                } label: {
+                                    Text("\(viewModel.team2Name)")
+                                        .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(viewModel.text2Color)
+                                        .font(.system(size:40))
+                                        .minimumScaleFactor(0.5)
+                                        .lineLimit(1)
+                                        
+                                }
+                                .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
+                                    TextField("Enter new team name", text: $newTeamName)
+                                    Button("Save") {
+                                        if !newTeamName.isEmpty {
+                                            viewModel.team2Name = newTeamName
                                         }
-                                        Button("Cancel", role: .cancel) { }
                                     }
+                                    Button("Cancel", role: .cancel) { }
+                                }
                                 
                                 Button() {
                                     isTeam2ColorEditing = true
@@ -389,9 +391,9 @@ struct MainView: View {
                     .environmentObject(viewModel)
             }
             
-            if viewModel.speechRecognitionStatus == true {
+            if viewModel.speechRecognitionStatus == true && showDictationText == true{
                 
-                    
+                
                 SpeechRecognitionView(viewModel: viewModel)
                     
             
@@ -676,10 +678,116 @@ struct ColorPickerView: View {
             }
                 
         }
-        .presentationDetents([.medium])
+        .onDisappear {
+            presentationMode.wrappedValue.dismiss()
+        }
         
     }
+    
         
+}
+
+struct SettingsView: View {
+    @EnvironmentObject var viewModel: MainViewViewModel
+    
+    @Binding var isGamePointEditing: Bool
+    @Binding var newGamePoint: String
+    @Binding var showDictationText: Bool
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        ZStack {
+            Color.white
+                .ignoresSafeArea()
+            VStack {
+                Text("Settings")
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundStyle(.black)
+                    .padding()
+                
+                
+                ScrollView(.vertical, showsIndicators: false){
+                    Divider()
+                    Button {
+                        isGamePointEditing = true
+                    } label: {
+                        HStack {
+                            Text("Set Game Point")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.black)
+                                .padding()
+                            
+                            Spacer()
+                            Image(systemName: "trophy")
+                                .font(.system(size: 25))
+                                .foregroundColor(Color.black)
+                                .padding()
+                        }
+                        .alert("Set Game Point", isPresented: $isGamePointEditing) {
+                            TextField("Current Game Point: \(viewModel.gamePoint)", text: $newGamePoint)
+                                .keyboardType(.numberPad) // Numeric keyboard
+                                .padding()
+                            Button("Save") {
+                                if !newGamePoint.isEmpty || !(Int(newGamePoint) ?? 21 <= viewModel.team1Score) || !(Int(newGamePoint) ?? 21 <= viewModel.team2Score) {
+                                    viewModel.gamePoint = Int(newGamePoint) ?? 21
+                                }
+                            }
+                            Button("Cancel", role: .cancel) { }
+                        }
+                        
+                        
+                    }
+                    
+                    Divider()
+                    
+                    Button {
+                        showDictationText.toggle()
+                    } label: {
+                        HStack {
+                            
+                            Text("Show Dictation Preview")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.black)
+                                .padding()
+                            
+                            Spacer()
+                            Image(systemName: showDictationText ? "message.badge.waveform.fill" : "message.badge.waveform")
+                                .font(.system(size: 25))
+                                .foregroundColor(Color.black)
+                                .padding()
+                        }
+                        
+                        
+                    }
+                    Divider()
+                }
+                
+                    
+                    
+                
+
+                Spacer()
+                
+                Button {
+                    presentationMode.wrappedValue.dismiss()
+                } label: {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.white)
+                            .stroke(.black, lineWidth: 2)
+                            .frame(maxHeight: 50)
+                        Text("Save")
+                            .font(.system(size: 25))
+                            .foregroundStyle(.black)
+                    }
+                    
+                }
+                .padding(.bottom, 10)
+                .padding(.horizontal, 10)
+            }
+        }
+    }
 }
 
 
