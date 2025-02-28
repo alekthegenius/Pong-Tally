@@ -763,6 +763,7 @@ struct SettingsView: View {
                     Divider()
                     
                     Button {
+                        
                         if viewModel.screenActivityMode == 1 {
                             viewModel.changeScreenMode(screenMode: 0)
                         } else {

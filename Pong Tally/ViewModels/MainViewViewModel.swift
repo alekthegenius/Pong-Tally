@@ -24,9 +24,11 @@ class MainViewViewModel: ObservableObject {
     private var lastProcessedCommand: String = ""
     private var lastCommandTime: Date = Date.distantPast
     
-    private var inactivityTimer: Timer?
-    private let timeoutInterval: TimeInterval = 2.0
 
+
+    
+    private var recognitionCycleTimer: Timer?
+    private let recognitionInterval: TimeInterval = 60.0
     
     @Published var team1Score: Int = 0
     @Published var team2Score: Int = 0
@@ -69,14 +71,18 @@ class MainViewViewModel: ObservableObject {
     
     deinit {
         stopListening()
+        recognitionCycleTimer?.invalidate()
+
     }
     
     func changeScreenMode(screenMode: Int) {
         screenActivityMode = screenMode
         if screenMode == 1 {
             UIApplication.shared.isIdleTimerDisabled = true
+            
         } else {
             UIApplication.shared.isIdleTimerDisabled = false
+            
         }
         
     }
@@ -154,7 +160,9 @@ class MainViewViewModel: ObservableObject {
         
         
         
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+            guard let self = self else { return }
+            
             if error != nil {
                 if let error = error{
                     print("ERROR: \(error.localizedDescription)")
@@ -178,10 +186,8 @@ class MainViewViewModel: ObservableObject {
                 isFinal = result.isFinal
                 print("command: \(command)")
                 
-                if self.speechRecognitionStatus {
-                    
-                    self.processCommand(command)
-                }
+                self.processCommand(command)
+                
                 
 
                 
@@ -193,11 +199,14 @@ class MainViewViewModel: ObservableObject {
            
             if isFinal {
                 self.stopListening()
+                self.recognitionCycleTimer?.invalidate()
                 
-                DispatchQueue.main.async { // Ensure main thread state access
-                    if self.speechRecognitionStatus {
-                        self.startListening()
-                    }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    
+                    
+                    self.scheduleRecognitionRestart()
+                    self.startListening()
+                    
                 }
                 
             }
@@ -214,6 +223,7 @@ class MainViewViewModel: ObservableObject {
         
         do {
             try audioEngine.start()
+            scheduleRecognitionRestart()
         } catch {
             print("Engine start failed: \(error)")
             return
@@ -221,13 +231,28 @@ class MainViewViewModel: ObservableObject {
            
     }
     
+    private func scheduleRecognitionRestart() {
+        recognitionCycleTimer?.invalidate()
+        
+        recognitionCycleTimer = Timer.scheduledTimer(
+            withTimeInterval: recognitionInterval,
+            repeats: false
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            self.stopListening()
+            self.startListening()
+        }
+    }
+    
     func stopListening() {
         print("Stop Listening")
         self.recognitionTask?.cancel()
+        self.recognitionCycleTimer?.invalidate()
 
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         self.recognitionRequest?.endAudio()
+        self.recognitionRequest = nil
         
         do {
            try audioSession.setActive(false)
@@ -241,12 +266,6 @@ class MainViewViewModel: ObservableObject {
 
     }
     
-    private func resetRecognition() {
-        stopListening()
-        startListening()
-        lastProcessedCommand = ""
-        
-    }
     
     func requestSpeechAuthorization() {
         SFSpeechRecognizer.requestAuthorization { authStatus in
