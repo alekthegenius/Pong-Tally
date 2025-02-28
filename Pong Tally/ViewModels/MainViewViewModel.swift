@@ -236,7 +236,7 @@ class MainViewViewModel: ObservableObject {
         
         recognitionCycleTimer = Timer.scheduledTimer(
             withTimeInterval: recognitionInterval,
-            repeats: false
+            repeats: true
         ) { [weak self] _ in
             guard let self = self else { return }
             self.stopListening()
@@ -252,7 +252,7 @@ class MainViewViewModel: ObservableObject {
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)
         self.recognitionRequest?.endAudio()
-        self.recognitionRequest = nil
+    
         
         do {
            try audioSession.setActive(false)
