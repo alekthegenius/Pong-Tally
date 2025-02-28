@@ -33,6 +33,8 @@ class MainViewViewModel: ObservableObject {
     @Published var team1Name: String = "Team 1"
     @Published var team2Name: String = "Team 2"
     
+    @Published var screenActivityMode: Int = 1
+    
     @Published var team1Color: Color = Color(UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0))
     @Published var team2Color: Color = Color(UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0))
     
@@ -61,12 +63,22 @@ class MainViewViewModel: ObservableObject {
     
     init() {
         requestSpeechAuthorization()
-        UIApplication.shared.isIdleTimerDisabled = true
+        changeScreenMode(screenMode: 1)
 
     }
     
     deinit {
         stopListening()
+    }
+    
+    func changeScreenMode(screenMode: Int) {
+        screenActivityMode = screenMode
+        if screenMode == 1 {
+            UIApplication.shared.isIdleTimerDisabled = true
+        } else {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+        
     }
 
     

@@ -106,6 +106,7 @@ struct MainView: View {
                                         .sheet(isPresented: $isTeam1ColorEditing) {
                                             ColorPickerView(selectedBackgroundColor: $viewModel.team1Color, selectedTextColor: $viewModel.text1Color)
                                         }
+                                        
                                 }
                                 
                             }
@@ -332,6 +333,7 @@ struct MainView: View {
                                         .sheet(isPresented: $isTeam2ColorEditing) {
                                             ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
                                         }
+                                        .presentationDetents([.medium])
                                 }
                                 
                             }
@@ -413,7 +415,7 @@ struct MainView: View {
 
 
 struct HelpMenuView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
@@ -454,7 +456,7 @@ struct HelpMenuView: View {
                 
                 HStack {
                     Button {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     } label: {
                         ZStack {
                             RoundedRectangle(cornerRadius: 5)
@@ -487,9 +489,6 @@ struct HelpMenuView: View {
                     .foregroundStyle(.gray)
             }
             .padding(.horizontal, 10)
-        }
-        .onDisappear {
-            presentationMode.wrappedValue.dismiss()
         }
     }
     @ViewBuilder
@@ -635,7 +634,7 @@ struct HelpMenuView: View {
 struct ColorPickerView: View {
     @Binding var selectedBackgroundColor: Color
     @Binding var selectedTextColor: Color
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -660,7 +659,7 @@ struct ColorPickerView: View {
                     .font(.system(size: 25))
                     .foregroundStyle(.black)
                 Button() {
-                    presentationMode.wrappedValue.dismiss() // Close the sheet
+                    dismiss() // Close the sheet
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -678,11 +677,11 @@ struct ColorPickerView: View {
             }
                 
         }
-        .onDisappear {
-            presentationMode.wrappedValue.dismiss()
-        }
+        .presentationDetents([.medium])
+        
         
     }
+    
     
         
 }
@@ -694,7 +693,7 @@ struct SettingsView: View {
     @Binding var newGamePoint: String
     @Binding var showDictationText: Bool
     
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
@@ -760,6 +759,32 @@ struct SettingsView: View {
                         
                         
                     }
+                    
+                    Divider()
+                    
+                    Button {
+                        if viewModel.screenActivityMode == 1 {
+                            viewModel.changeScreenMode(screenMode: 0)
+                        } else {
+                            viewModel.changeScreenMode(screenMode: 1)
+                        }
+                    } label: {
+                        HStack {
+                            
+                            Text("Keep Display Awake")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.black)
+                                .padding()
+                            
+                            Spacer()
+                            Image(systemName: viewModel.screenActivityMode == 1 ? "sleep.circle.fill" : "sleep.circle")
+                                .font(.system(size: 25))
+                                .foregroundColor(Color.black)
+                                .padding()
+                        }
+                        
+                        
+                    }
                     Divider()
                 }
                 
@@ -770,7 +795,7 @@ struct SettingsView: View {
                 Spacer()
                 
                 Button {
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -793,7 +818,8 @@ struct SettingsView: View {
 
 struct GameOverView: View {
     @EnvironmentObject var viewModel: MainViewViewModel
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var confettiCounter = 0
     
     var body: some View {
@@ -825,7 +851,7 @@ struct GameOverView: View {
                 
                 Button {
                     viewModel.resetScore()
-                    presentationMode.wrappedValue.dismiss() // Close the sheet
+                    dismiss() // Close the sheet
                     
                 } label: {
                     ZStack {
@@ -849,7 +875,6 @@ struct GameOverView: View {
         }
         .onDisappear {
             viewModel.resetScore()
-            presentationMode.wrappedValue.dismiss()
         }
         .confettiCannon(trigger: $confettiCounter, num: 80)
         
