@@ -164,11 +164,16 @@ class MainViewViewModel: ObservableObject {
             guard let self = self else { return }
             
             if error != nil {
-                if let error = error{
-                    print("ERROR: \(error.localizedDescription)")
+                if let error = error as NSError? {
+                    print("ERROR: \(error)")
                     // Handle specific error codes
-                    self.stopListening()
-                    return
+                    if error.code == 1110 || error.code == 301 {
+                        
+                    } else {
+                        self.stopListening()
+                        return
+                    }
+                    
                 }
                 
             }
@@ -236,7 +241,7 @@ class MainViewViewModel: ObservableObject {
         
         recognitionCycleTimer = Timer.scheduledTimer(
             withTimeInterval: recognitionInterval,
-            repeats: true
+            repeats: false
         ) { [weak self] _ in
             guard let self = self else { return }
             self.stopListening()
