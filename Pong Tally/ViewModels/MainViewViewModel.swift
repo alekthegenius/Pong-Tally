@@ -26,9 +26,7 @@ class MainViewViewModel: ObservableObject {
     
 
 
-    
-    private var recognitionCycleTimer: Timer?
-    private let recognitionInterval: TimeInterval = 60.0
+
     
     @Published var team1Score: Int = 0
     @Published var team2Score: Int = 0
@@ -60,6 +58,15 @@ class MainViewViewModel: ObservableObject {
     @Published var dictatedText: String = ""
     
     
+    @Published var servingTeam: Int = 1
+    @Published var servingIndicators: Bool = true
+    @Published var servesPerServer: Int = 2
+    @Published var currentNumberOfServes: Int = 0
+    
+
+    
+    
+    
     
 
     
@@ -71,7 +78,7 @@ class MainViewViewModel: ObservableObject {
     
     deinit {
         stopListening()
-        recognitionCycleTimer?.invalidate()
+        
 
     }
     
@@ -204,12 +211,11 @@ class MainViewViewModel: ObservableObject {
            
             if isFinal {
                 self.stopListening()
-                self.recognitionCycleTimer?.invalidate()
+                
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     
                     
-                    self.scheduleRecognitionRestart()
                     self.startListening()
                     
                 }
@@ -228,7 +234,7 @@ class MainViewViewModel: ObservableObject {
         
         do {
             try audioEngine.start()
-            scheduleRecognitionRestart()
+           
         } catch {
             print("Engine start failed: \(error)")
             return
@@ -236,23 +242,10 @@ class MainViewViewModel: ObservableObject {
            
     }
     
-    private func scheduleRecognitionRestart() {
-        recognitionCycleTimer?.invalidate()
-        
-        recognitionCycleTimer = Timer.scheduledTimer(
-            withTimeInterval: recognitionInterval,
-            repeats: false
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            self.stopListening()
-            self.startListening()
-        }
-    }
     
     func stopListening() {
         print("Stop Listening")
         self.recognitionTask?.cancel()
-        self.recognitionCycleTimer?.invalidate()
 
         self.audioEngine.stop()
         self.audioEngine.inputNode.removeTap(onBus: 0)

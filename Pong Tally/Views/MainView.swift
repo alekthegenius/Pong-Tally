@@ -40,122 +40,168 @@ struct MainView: View {
     var body: some View {
         
         
-        ZStack {
-            VStack() {
-                Button {
-                    //
-                    heavyhapticGenerator.impactOccurred(intensity: 1)
-                    viewModel.increaseTeam1()
-                    if viewModel.team1Score > 0 {
-                        viewModel.showTeam1BackButton = true
-                    }
-                    if (viewModel.team1Score >= viewModel.gamePoint){
-                        if viewModel.winByTwo && ((viewModel.team1Score - viewModel.team2Score) >= 2){
-                            
-                            viewModel.gameWinner = 1
-                            viewModel.showTeam1BackButton = false
-                            viewModel.showTeam2BackButton = false
-                            viewModel.gameOver = true
-                        } else if !viewModel.winByTwo {
-                            viewModel.gameWinner = 1
-                            viewModel.showTeam1BackButton = false
-                            viewModel.showTeam2BackButton = false
-                            viewModel.gameOver = true
-                        }
-                    }
+        ZStack { // Allows for the Use of Overlays
+            
+            VStack() { // Aligns Main Three Elements: First Team Board, Menu Bar, and Second Team Board
+                
+                ZStack { // First Team Board
+                    Color.white
+                        .ignoresSafeArea()
                     
-                } label: {
-                    ZStack() {
+                    Button { // Background Button to Enable Score
                         
+                        teamOneScore()
+                        
+                    } label: {
                         Rectangle()
                             .fill(viewModel.team1Color)
                             .ignoresSafeArea()
                         
-                        VStack() {
-                            HStack() {
-                                Button {
-                                    newTeamName = viewModel.team1Name
-                                    isTeam1TitleEditing = true
-                                } label:{
-                                    Text("\(viewModel.team1Name)")
-                                        .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(viewModel.text1Color)
-                                        .font(.system(size:40))
-                                        .minimumScaleFactor(0.5)
-                                        .lineLimit(1)
-                                        
-                                }
-                                .alert("Change Team Name", isPresented: $isTeam1TitleEditing) {
-                                    TextField("Enter new team name", text: $newTeamName)
-                                    Button("Save") {
-                                        if !newTeamName.isEmpty {
-                                            viewModel.team1Name = newTeamName
-                                        }
-                                    }
-                                    Button("Cancel", role: .cancel) { }
-                                }
-                                
-                                Button {
-                                    isTeam1ColorEditing = true
-                                } label: {
-                                    Circle()
-                                        .stroke(viewModel.text1Color, lineWidth: 5)
-                                        .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
-                                        .padding(.trailing, 10)
-                                        .sheet(isPresented: $isTeam1ColorEditing) {
-                                            ColorPickerView(selectedBackgroundColor: $viewModel.team1Color, selectedTextColor: $viewModel.text1Color)
-                                        }
-                                        
-                                }
-                                
-                            }
-                            .padding()
-                            
-                            Spacer()
-                            Text("\(viewModel.team1Score)")
-                                .fontWeight(.heavy)
-                                .foregroundStyle(viewModel.text1Color)
-                                .font(.system(size:80))
-                            
-                            
-                            Spacer()
-                            
-                            
-                            
-                        }
-                        .padding(.top, 20)
-                        
-                        VStack{
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                Button {
-                                    if viewModel.team1Score > 0 {
-                                        viewModel.decreaseTeam1()
-                                    } else {
-                                        viewModel.showTeam1BackButton = false
-                                    }
-                                    
-                                    if viewModel.team1Score == 0 {
-                                        viewModel.showTeam1BackButton = false
-                                    }
-                                    
-                                } label: {
-                                    Image(systemName: "arrowshape.turn.up.backward")
-                                        .font(.system(size: 30))
-                                        .foregroundStyle(viewModel.text1Color)
-                                        .opacity(viewModel.showTeam1BackButton ? 1 : 0.2)
-                                        .disabled(viewModel.showTeam1BackButton)
-                                }
-                                .padding(.bottom, 20)
-                                .padding(.trailing, 20)
-                            }
-                        }
-                        
                     }
                     
+                    VStack() { // Align Board Controls
+                        
+                        HStack() { // Align Board Header
+                            
+                            Button { // Team Name
+                                newTeamName = viewModel.team1Name
+                                isTeam1TitleEditing = true
+                            } label:{
+                                Text("\(viewModel.team1Name)")
+                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(viewModel.text1Color)
+                                    .font(.system(size:40))
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                                    
+                            }
+                            .alert("Change Team Name", isPresented: $isTeam1TitleEditing) {
+                                TextField("Enter new team name", text: $newTeamName)
+                                Button("Save") {
+                                    if !newTeamName.isEmpty {
+                                        viewModel.team1Name = newTeamName
+                                    }
+                                }
+                                Button("Cancel", role: .cancel) { }
+                            }
+                            
+                            Button { // Color Settings Button
+                                isTeam1ColorEditing = true
+                            } label: {
+                                Circle()
+                                    .stroke(viewModel.text1Color, lineWidth: 5)
+                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                    .padding(.trailing, 10)
+                                    .sheet(isPresented: $isTeam1ColorEditing) {
+                                        ColorPickerView(selectedBackgroundColor: $viewModel.team1Color, selectedTextColor: $viewModel.text1Color)
+                                    }
+                                    
+                            }
+                            
+                        }
+                        .padding()
+                        
+                        Spacer()
+
+                        Text("\(viewModel.team1Score)") // Score Viewer
+                            .fontWeight(.heavy)
+                            .foregroundStyle(viewModel.text1Color)
+                            .font(.system(size:80))
+                            .allowsHitTesting(false)
+                            .offset(y: -25)
+                        
+                        
+                        
+                        Spacer()
+                        
+                        
+                        
+                    }
+                    .padding(.top, 20)
                     
+                    VStack{ // Bottom Header
+                        
+                        Spacer()
+                        
+                        HStack { // Align Score Loss Button
+                            
+                            Spacer()
+                            
+                            Button { // Score Loss Button
+                                if viewModel.team1Score > 0 {
+                                    viewModel.decreaseTeam1()
+                                    
+                                    print(viewModel.currentNumberOfServes)
+                                    
+                                    if viewModel.currentNumberOfServes > 0 {
+                                        viewModel.currentNumberOfServes -= 1
+                                    } else if viewModel.currentNumberOfServes == 0 {
+                                        viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+                                        viewModel.currentNumberOfServes = viewModel.servesPerServer - 1
+                                    }
+                                } else {
+                                    viewModel.showTeam1BackButton = false
+                                }
+                                
+                                if viewModel.team1Score == 0 {
+                                    viewModel.showTeam1BackButton = false
+                                }
+                                
+                            } label: {
+                                Image(systemName: "arrowshape.turn.up.backward")
+                                    .font(.system(size: 30))
+                                    .foregroundStyle(viewModel.text1Color)
+                                    .opacity(viewModel.showTeam1BackButton ? 1 : 0.2)
+                                    .disabled(viewModel.showTeam1BackButton)
+                            }
+                            .padding(.bottom, 20)
+                            .padding(.trailing, 20)
+                        }
+                        
+                       
+                    }
+                    
+                    if viewModel.servingTeam == 1 && viewModel.servingIndicators {
+                        VStack {
+                            
+                            Spacer()
+                            
+                            Button { // Server Indicator
+                                viewModel.servingTeam = 2
+                                viewModel.currentNumberOfServes = 0
+                            } label: {
+                                
+                                
+                                ZStack {
+                                    
+                                    Color.clear
+                                    
+                                    Triangle()
+                                        .fill(Color.white.opacity(0.5))
+                                        .stroke(viewModel.text1Color, lineWidth: 4)
+                                        .frame(width: 120, height: 50)
+                                        .offset(y: 2)
+                                    
+                                    Text(viewModel.currentNumberOfServes.formatted())
+                                        .font(.system(size: 25, weight: .medium))
+                                        .foregroundStyle(viewModel.text1Color)
+                                        .offset(y: 5)
+                                    
+                                    
+                                    
+                                }
+                                .frame(width: 90, height: 50)
+                                .contentShape(Triangle())
+                                
+                                
+                                
+                            }
+                            
+                            
+                            
+                        }
+                    }
                 }
                 
                 
@@ -163,17 +209,20 @@ struct MainView: View {
                 
                 
                 
-                // Middle Menu Bar
                 
+                // Middle Menu Bar
                 ZStack() {
-                    Rectangle()
-                        .fill(.white)
-                        .frame(maxHeight: 30)
+                    
+
+                    Color.white // Menu Bar Background
                     
                     
-                    HStack() {
                         
-                        Button {
+                    
+                    
+                    HStack() { // Align Menu Bar Items
+                        
+                        Button { // Help Menu Buttons
                             isHelpMenuShown = true
                         } label: {
                             ZStack {
@@ -193,7 +242,7 @@ struct MainView: View {
                             HelpMenuView()
                         }
                         
-                        Button {
+                        Button { // Settings Button
                             isSettingsMenuShown = true
                         } label: {
                             Image(systemName: "gearshape")
@@ -207,7 +256,7 @@ struct MainView: View {
                         }
                         
                         
-                        Button {
+                        Button { // Speech Recognition Toggle Button
                             
                             if viewModel.speechRecognitionStatus {
                                 viewModel.speechRecognitionStatus.toggle()
@@ -231,11 +280,9 @@ struct MainView: View {
                         .opacity(viewModel.speechRecognitionAuthorized ? 1 : 0.5)
                         .disabled(!viewModel.speechRecognitionAuthorized)
                         
+
                         
-                        
-                        
-                        
-                        Button {
+                        Button { // Restart Game Button
                             viewModel.showTeam1BackButton = false
                             viewModel.showTeam2BackButton = false
                             viewModel.resetScore()
@@ -246,7 +293,7 @@ struct MainView: View {
                         }
                         .padding()
                         
-                        Button {
+                        Button { // Duce Toggle Button
                             viewModel.winByTwo.toggle()
                         } label: {
                             if viewModel.winByTwo {
@@ -265,127 +312,172 @@ struct MainView: View {
                         
                     }
                     
-                    
                 }
+                .frame(height: 60) // Keep Constant Menu Bar Height
                 
-                Button {
-                    //
-                    heavyhapticGenerator.impactOccurred(intensity: 1)
-                    viewModel.increaseTeam2()
+                
+                
+                
+                ZStack { // Second Team Board
+                    Color.white
+                        .ignoresSafeArea()
                     
-                    if viewModel.team2Score > 0 {
-                        viewModel.showTeam2BackButton = true
-                    }
-                    
-                    if (viewModel.team2Score >= viewModel.gamePoint){
-                        if viewModel.winByTwo && ((viewModel.team2Score - viewModel.team1Score) >= 2){
-                            
-                            viewModel.gameWinner = 2
-                            viewModel.showTeam1BackButton = false
-                            viewModel.showTeam2BackButton = false
-                            viewModel.gameOver = true
-                        } else if !viewModel.winByTwo {
-                            viewModel.gameWinner = 2
-                            viewModel.showTeam1BackButton = false
-                            viewModel.showTeam2BackButton = false
-                            viewModel.gameOver = true
-                        }
-                    }
-                    
-                } label: {
-                    ZStack() {
+                    Button { // Background Button to Enable Score
                         
+                        teamTwoScore()
+                        
+                    } label: {
                         Rectangle()
                             .fill(viewModel.team2Color)
                             .ignoresSafeArea()
-                        VStack(alignment: HorizontalAlignment.center) {
-                            HStack() {
-                                Button {
-                                    newTeamName = viewModel.team2Name
-                                    isTeam2TitleEditing = true
-                                } label: {
-                                    Text("\(viewModel.team2Name)")
-                                        .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(viewModel.text2Color)
-                                        .font(.system(size:40))
-                                        .minimumScaleFactor(0.5)
-                                        .lineLimit(1)
-                                        
-                                }
-                                .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
-                                    TextField("Enter new team name", text: $newTeamName)
-                                    Button("Save") {
-                                        if !newTeamName.isEmpty {
-                                            viewModel.team2Name = newTeamName
-                                        }
+                    }
+                    
+                        
+                    VStack() { // Align Board Controls
+                        
+
+                        
+                        HStack() { // Align Board Header
+                            
+                            Button { // Team Name
+                                newTeamName = viewModel.team2Name
+                                isTeam2TitleEditing = true
+                            } label: {
+                                Text("\(viewModel.team2Name)")
+                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(viewModel.text2Color)
+                                    .font(.system(size:40))
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                                    
+                            }
+                            .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
+                                TextField("Enter new team name", text: $newTeamName)
+                                Button("Save") {
+                                    if !newTeamName.isEmpty {
+                                        viewModel.team2Name = newTeamName
                                     }
-                                    Button("Cancel", role: .cancel) { }
+                                }
+                                Button("Cancel", role: .cancel) { }
+                            }
+                            
+                            Button() { // Color Settings Button
+                                isTeam2ColorEditing = true
+                            } label: {
+                                Circle()
+                                    .stroke(viewModel.text2Color, lineWidth: 5)
+                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                    .padding(.trailing, 10)
+                                    .sheet(isPresented: $isTeam2ColorEditing) {
+                                        ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
+                                    }
+                                    .presentationDetents([.medium])
+                            }
+                            
+                        }
+                        .padding()
+                        
+                        Spacer() // Score Viewer
+                        Text("\(viewModel.team2Score)")
+                            .fontWeight(.heavy)
+                            .foregroundStyle(viewModel.text2Color)
+                            .font(.system(size:80))
+                            .allowsHitTesting(false)
+                            .offset(y: -25)
+                        
+                        
+                        Spacer()
+                    }
+                    
+                    VStack { // Bottom Header
+                        
+                        Spacer()
+                        
+                        HStack { // Align Score Loss Button
+                            
+                            Spacer()
+                            
+                            Button { // Score Loss Button
+                                if viewModel.team2Score > 0 {
+                                    viewModel.decreaseTeam2()
+                                    
+                                    print(viewModel.currentNumberOfServes)
+                                    
+                                    if viewModel.currentNumberOfServes > 0 {
+                                        viewModel.currentNumberOfServes -= 1
+                                    } else if viewModel.currentNumberOfServes == 0 {
+                                        viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+                                        viewModel.currentNumberOfServes = viewModel.servesPerServer - 1
+                                    }
+                                } else {
+                                    viewModel.showTeam2BackButton = false
                                 }
                                 
-                                Button() {
-                                    isTeam2ColorEditing = true
-                                } label: {
-                                    Circle()
-                                        .stroke(viewModel.text2Color, lineWidth: 5)
-                                        .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
-                                        .padding(.trailing, 10)
-                                        .sheet(isPresented: $isTeam2ColorEditing) {
-                                            ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
-                                        }
-                                        .presentationDetents([.medium])
+                                if viewModel.team2Score == 0 {
+                                    viewModel.showTeam2BackButton = false
                                 }
                                 
+                            } label: {
+                                Image(systemName: "arrowshape.turn.up.backward")
+                                    .font(.system(size: 30))
+                                    .foregroundStyle(viewModel.text2Color)
+                                    .opacity(viewModel.showTeam2BackButton ? 1 : 0.2)
+                                    .disabled(viewModel.showTeam2BackButton)
                             }
-                            .padding()
+                            .padding(.bottom, 20)
+                            .padding(.trailing, 20)
                             
-                            Spacer()
-                            Text("\(viewModel.team2Score)")
-                                .fontWeight(.heavy)
-                                .foregroundStyle(viewModel.text2Color)
-                                .font(.system(size:80))
-                            
-                            
-                            Spacer()
                         }
-                        
-                        VStack{
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                Button {
-                                    if viewModel.team2Score > 0 {
-                                        viewModel.decreaseTeam2()
-                                    } else {
-                                        viewModel.showTeam2BackButton = false
-                                    }
-                                    
-                                    if viewModel.team2Score == 0 {
-                                        viewModel.showTeam2BackButton = false
-                                    }
-                                    
-                                } label: {
-                                    Image(systemName: "arrowshape.turn.up.backward")
-                                        .font(.system(size: 30))
-                                        .foregroundStyle(viewModel.text2Color)
-                                        .opacity(viewModel.showTeam2BackButton ? 1 : 0.2)
-                                        .disabled(viewModel.showTeam2BackButton)
-                                }
-                                .padding(.bottom, 20)
-                                .padding(.trailing, 20)
-                            }
-                        }
-                        
                         
                         
                     }
+                    
+                    if viewModel.servingTeam == 2 && viewModel.servingIndicators {
+                        VStack {
+                            
+                            Button { // Server Indicator
+                                viewModel.servingTeam = 1
+                                viewModel.currentNumberOfServes = 0
+                            } label: {
+                                
+                                
+                                ZStack {
+                                    
+                                    Color.clear
+                                    
+                                    Triangle()
+                                        .fill(Color.white.opacity(0.5))
+                                        .stroke(viewModel.text2Color, lineWidth: 4)
+                                        .frame(width: 120, height: 50)
+                                        .rotationEffect(Angle(degrees: 180))
+                                        .offset(y: -2)
+                                    
+                                    Text(viewModel.currentNumberOfServes.formatted())
+                                        .font(.system(size: 25, weight: .medium))
+                                        .foregroundStyle(viewModel.text2Color)
+                                        .offset(y: -5)
+                                    
+                                    
+                                    
+                                    
+                                }
+                                .frame(width: 90, height: 50)
+                                .contentShape(Triangle())
+                                
+                                
+                            }
+                            
+                            
+                            Spacer()
+                        }
+                    }
+                        
                 }
-                .onAppear {
-                    heavyhapticGenerator.prepare() // Required for immediate feedback
-                }
-                
-                
-                
+            
+            }
+            .onAppear {
+                heavyhapticGenerator.prepare() // Required for immediate feedback
             }
             .background(.white)
             .sheet(isPresented: $viewModel.gameOver) {
@@ -407,6 +499,77 @@ struct MainView: View {
         
         
        
+    }
+    
+    func teamOneScore() {
+        heavyhapticGenerator.impactOccurred(intensity: 1)
+        
+        viewModel.increaseTeam1()
+        
+        if viewModel.currentNumberOfServes < viewModel.servesPerServer {
+            viewModel.currentNumberOfServes += 1
+        }
+        
+        if viewModel.currentNumberOfServes == viewModel.servesPerServer {
+            viewModel.currentNumberOfServes = 0
+            viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+        }
+        
+        if viewModel.team1Score > 0 {
+            viewModel.showTeam1BackButton = true
+        }
+        if (viewModel.team1Score >= viewModel.gamePoint){
+            if viewModel.winByTwo && ((viewModel.team1Score - viewModel.team2Score) >= 2){
+                
+                viewModel.gameWinner = 1
+                viewModel.showTeam1BackButton = false
+                viewModel.showTeam2BackButton = false
+                viewModel.gameOver = true
+                
+                viewModel.currentNumberOfServes = 0
+            } else if !viewModel.winByTwo {
+                viewModel.gameWinner = 1
+                viewModel.showTeam1BackButton = false
+                viewModel.showTeam2BackButton = false
+                viewModel.gameOver = true
+                viewModel.currentNumberOfServes = 0
+            }
+        }
+    }
+    
+    func teamTwoScore() {
+        heavyhapticGenerator.impactOccurred(intensity: 1)
+        viewModel.increaseTeam2()
+        
+        if viewModel.currentNumberOfServes < viewModel.servesPerServer {
+            viewModel.currentNumberOfServes += 1
+        }
+        
+        if viewModel.currentNumberOfServes == viewModel.servesPerServer {
+            viewModel.currentNumberOfServes = 0
+            viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+        }
+        
+        if viewModel.team2Score > 0 {
+            viewModel.showTeam2BackButton = true
+        }
+        
+        if (viewModel.team2Score >= viewModel.gamePoint){
+            if viewModel.winByTwo && ((viewModel.team2Score - viewModel.team1Score) >= 2){
+                
+                viewModel.gameWinner = 2
+                viewModel.showTeam1BackButton = false
+                viewModel.showTeam2BackButton = false
+                viewModel.gameOver = true
+                viewModel.currentNumberOfServes = 0
+            } else if !viewModel.winByTwo {
+                viewModel.gameWinner = 2
+                viewModel.showTeam1BackButton = false
+                viewModel.showTeam2BackButton = false
+                viewModel.gameOver = true
+                viewModel.currentNumberOfServes = 0
+            }
+        }
     }
     
     
@@ -629,6 +792,9 @@ struct HelpMenuView: View {
     
     
     
+    
+    
+    
 }
 
 struct ColorPickerView: View {
@@ -787,6 +953,28 @@ struct SettingsView: View {
                         
                     }
                     Divider()
+                    
+                    Button {
+                        
+                        viewModel.servingIndicators.toggle()
+                    } label: {
+                        HStack {
+                            
+                            Text("Enable Serving Indicators")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.black)
+                                .padding()
+                            
+                            Spacer()
+                            Image(systemName: viewModel.servingIndicators ? "figure.tennis.circle.fill" : "figure.tennis.circle")
+                                .font(.system(size: 25))
+                                .foregroundColor(Color.black)
+                                .padding()
+                        }
+                        
+                        
+                    }
+                    Divider()
                 }
                 
                     
@@ -912,6 +1100,23 @@ func getAppVersion() -> String {
         }
         return "Unknown"
     }
+
+struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+
+        // Start from the bottom left
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        // Add line to the top middle
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
+        // Add line to the bottom right
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        // Close the path to create the third side of the triangle
+        path.closeSubpath()
+
+        return path
+    }
+}
 
 #Preview {
     MainView()
