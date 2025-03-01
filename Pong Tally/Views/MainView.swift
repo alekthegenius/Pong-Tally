@@ -518,6 +518,8 @@ struct MainView: View {
             viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
         }
         
+            
+        
         if viewModel.team1Score > 0 {
             viewModel.showTeam1BackButton = true
         }
@@ -981,7 +983,7 @@ struct SettingsView: View {
                     }
                     Divider()
                     
-                    Divider()
+
                     Button {
                         isServerNumberEditing = true
                     } label: {
@@ -1011,6 +1013,8 @@ struct SettingsView: View {
                         
                         
                     }
+                    
+                    Divider()
                 }
                 
                     
