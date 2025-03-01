@@ -30,6 +30,9 @@ struct MainView: View {
     
     @State private var isHelpMenuShown: Bool = false
     
+    @State private var isServerNumberEditing: Bool = false
+    @State private var newServerNumber: String = ""
+    
     
     let heavyhapticGenerator = UIImpactFeedbackGenerator(style: .heavy)
 
@@ -251,7 +254,7 @@ struct MainView: View {
                                 .padding()
                         }
                         .sheet(isPresented: $isSettingsMenuShown) {
-                            SettingsView(isGamePointEditing: $isGamePointEditing, newGamePoint: $newGamePoint, showDictationText: $showDictationText)
+                            SettingsView(isGamePointEditing: $isGamePointEditing, newGamePoint: $newGamePoint, isServerNumberEditing: $isServerNumberEditing, newServerNumber: $newServerNumber, showDictationText: $showDictationText)
                                 .environmentObject(viewModel)
                         }
                         
@@ -857,6 +860,8 @@ struct SettingsView: View {
     
     @Binding var isGamePointEditing: Bool
     @Binding var newGamePoint: String
+    @Binding var isServerNumberEditing: Bool
+    @Binding var newServerNumber: String
     @Binding var showDictationText: Bool
     
     @Environment(\.dismiss) private var dismiss
@@ -975,6 +980,37 @@ struct SettingsView: View {
                         
                     }
                     Divider()
+                    
+                    Divider()
+                    Button {
+                        isServerNumberEditing = true
+                    } label: {
+                        HStack {
+                            Text("Set Number of Serves")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.black)
+                                .padding()
+                            
+                            Spacer()
+                            Image(systemName: "figure.tennis")
+                                .font(.system(size: 25))
+                                .foregroundColor(Color.black)
+                                .padding()
+                        }
+                        .alert("Set Number of Serves", isPresented: $isServerNumberEditing) {
+                            TextField("Current Number of Serves: \(viewModel.servesPerServer)", text: $newServerNumber)
+                                .keyboardType(.numberPad) // Numeric keyboard
+                                .padding()
+                            Button("Save") {
+                                if !newServerNumber.isEmpty && Int(newServerNumber) ?? 2 > 0 {
+                                    viewModel.servesPerServer = Int(newServerNumber) ?? 2
+                                }
+                            }
+                            Button("Cancel", role: .cancel) { }
+                        }
+                        
+                        
+                    }
                 }
                 
                     
