@@ -71,7 +71,7 @@ struct MainView: View {
                                 isTeam1TitleEditing = true
                             } label:{
                                 Text("\(viewModel.team1Name)")
-                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                    .frame(maxHeight: 45)
                                     .fontWeight(.bold)
                                     .foregroundStyle(viewModel.text1Color)
                                     .font(.system(size:40))
@@ -89,12 +89,14 @@ struct MainView: View {
                                 Button("Cancel", role: .cancel) { }
                             }
                             
+                            Spacer()
+                            
                             Button { // Color Settings Button
                                 isTeam1ColorEditing = true
                             } label: {
                                 Circle()
                                     .stroke(viewModel.text1Color, lineWidth: 5)
-                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                    .frame(maxWidth: 40, maxHeight: 40)
                                     .padding(.trailing, 10)
                                     .sheet(isPresented: $isTeam1ColorEditing) {
                                         ColorPickerView(selectedBackgroundColor: $viewModel.team1Color, selectedTextColor: $viewModel.text1Color)
@@ -288,7 +290,10 @@ struct MainView: View {
                         Button { // Restart Game Button
                             viewModel.showTeam1BackButton = false
                             viewModel.showTeam2BackButton = false
+                            
+                            viewModel.currentNumberOfServes = 0
                             viewModel.resetScore()
+                           
                         } label: {
                             Image(systemName: "arrow.circlepath")
                                 .font(.system(size: 25))
@@ -347,7 +352,7 @@ struct MainView: View {
                                 isTeam2TitleEditing = true
                             } label: {
                                 Text("\(viewModel.team2Name)")
-                                    .frame(maxWidth: .infinity, alignment: .leading) // Centers the text
+                                    .frame(maxHeight: 45)
                                     .fontWeight(.bold)
                                     .foregroundStyle(viewModel.text2Color)
                                     .font(.system(size:40))
@@ -365,12 +370,13 @@ struct MainView: View {
                                 Button("Cancel", role: .cancel) { }
                             }
                             
+                            Spacer()
                             Button() { // Color Settings Button
                                 isTeam2ColorEditing = true
                             } label: {
                                 Circle()
                                     .stroke(viewModel.text2Color, lineWidth: 5)
-                                    .frame(maxWidth: .infinity, maxHeight: 40, alignment: .trailing)
+                                    .frame(maxWidth: 40, maxHeight: 40)
                                     .padding(.trailing, 10)
                                     .sheet(isPresented: $isTeam2ColorEditing) {
                                         ColorPickerView(selectedBackgroundColor: $viewModel.team2Color, selectedTextColor: $viewModel.text2Color)
@@ -509,13 +515,31 @@ struct MainView: View {
         
         viewModel.increaseTeam1()
         
-        if viewModel.currentNumberOfServes < viewModel.servesPerServer {
-            viewModel.currentNumberOfServes += 1
-        }
-        
-        if viewModel.currentNumberOfServes == viewModel.servesPerServer {
-            viewModel.currentNumberOfServes = 0
-            viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+        if (viewModel.team1Score >= viewModel.gamePoint - 1) && (viewModel.team2Score >= viewModel.gamePoint - 1){ // Check for Duce
+            
+            if viewModel.team1Score > viewModel.team2Score {
+                
+                viewModel.servingTeam = 2
+            } else if viewModel.team2Score > viewModel.team1Score {
+                
+                viewModel.servingTeam = 1
+            } else {
+                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+            }
+            
+        } else if (viewModel.team1Score == viewModel.gamePoint - 1) && !(viewModel.team2Score == viewModel.gamePoint - 1) {
+            viewModel.servingTeam = 2
+        } else if (viewModel.team2Score == viewModel.gamePoint - 1) && !(viewModel.team1Score == viewModel.gamePoint - 1) {
+            viewModel.servingTeam = 1
+        } else {
+            if viewModel.currentNumberOfServes < viewModel.servesPerServer {
+                viewModel.currentNumberOfServes += 1
+            }
+            
+            if viewModel.currentNumberOfServes == viewModel.servesPerServer {
+                viewModel.currentNumberOfServes = 0
+                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+            }
         }
         
             
@@ -546,13 +570,34 @@ struct MainView: View {
         heavyhapticGenerator.impactOccurred(intensity: 1)
         viewModel.increaseTeam2()
         
-        if viewModel.currentNumberOfServes < viewModel.servesPerServer {
-            viewModel.currentNumberOfServes += 1
-        }
         
-        if viewModel.currentNumberOfServes == viewModel.servesPerServer {
-            viewModel.currentNumberOfServes = 0
-            viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+        
+        
+        if (viewModel.team1Score >= viewModel.gamePoint - 1) && (viewModel.team2Score >= viewModel.gamePoint - 1){ // Check for Duce
+            
+            if viewModel.team1Score > viewModel.team2Score {
+                
+                viewModel.servingTeam = 2
+            } else if viewModel.team2Score > viewModel.team1Score {
+                
+                viewModel.servingTeam = 1
+            } else {
+                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+            }
+            
+        } else if (viewModel.team1Score == viewModel.gamePoint - 1) && !(viewModel.team2Score == viewModel.gamePoint - 1) {
+            viewModel.servingTeam = 2
+        } else if (viewModel.team2Score == viewModel.gamePoint - 1) && !(viewModel.team1Score == viewModel.gamePoint - 1) {
+            viewModel.servingTeam = 1
+        } else {
+            if viewModel.currentNumberOfServes < viewModel.servesPerServer {
+                viewModel.currentNumberOfServes += 1
+            }
+            
+            if viewModel.currentNumberOfServes == viewModel.servesPerServer {
+                viewModel.currentNumberOfServes = 0
+                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
+            }
         }
         
         if viewModel.team2Score > 0 {
@@ -669,6 +714,20 @@ struct HelpMenuView: View {
             Spacer()
         }
         
+        
+        
+        HStack {
+                Image(systemName: "gearshape")
+                .font(.system(size: 20))
+     
+                Text("Open up the Settings Menu")
+                .font(.system(size: 15))
+                    .multilineTextAlignment(.center)
+           
+            }
+            
+        Divider()
+        
         HStack() {
                 Image(systemName: "microphone")
                 .font(.system(size: 20))
@@ -680,18 +739,6 @@ struct HelpMenuView: View {
                 
             }
         
-        Divider()
-        
-        HStack {
-                Image(systemName: "trophy")
-                .font(.system(size: 20))
-     
-                Text("Sets the Winning Point for the Teams to Play To")
-                .font(.system(size: 15))
-                    .multilineTextAlignment(.center)
-           
-            }
-            
         Divider()
         
         HStack {
