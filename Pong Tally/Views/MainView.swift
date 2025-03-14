@@ -202,6 +202,7 @@ struct MainView: View {
                                 
                                 
                             }
+                            .zIndex(2)
                             
                             
                             
@@ -322,6 +323,7 @@ struct MainView: View {
                     
                 }
                 .frame(height: 60) // Keep Constant Menu Bar Height
+                .zIndex(3)
                 
                 
                 
@@ -476,7 +478,7 @@ struct MainView: View {
                                 
                                 
                             }
-                            
+                            .zIndex(2)
                             
                             Spacer()
                         }
@@ -1028,6 +1030,8 @@ struct SettingsView: View {
                         
                         
                     }
+                    
+                    
                     Divider()
                     
 
