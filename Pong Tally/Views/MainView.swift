@@ -780,7 +780,7 @@ struct HelpMenuView: View {
         
         VStack(alignment: .leading) {
             HStack {
-                Text("'teamName' score:")
+                Text("'Team Name' score:")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(.black)
                     .padding(.vertical, 5)
@@ -795,7 +795,7 @@ struct HelpMenuView: View {
             
             
             HStack {
-                Text("'teamName' loss:")
+                Text("'Team Name' loss:")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(.black)
                     .padding(.vertical, 5)
