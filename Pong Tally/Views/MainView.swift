@@ -737,7 +737,7 @@ struct HelpMenuView: View {
                 
                 Text("Toggles On and Off Voice Commands (Turns Red if Currently Recording)")
                 .font(.system(size: 15))
-                    .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading)
                 
             }
         
