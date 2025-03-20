@@ -279,7 +279,7 @@ struct MainView: View {
                         } label: {
                             Image(systemName: (viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized) ? "microphone.fill" : "microphone.slash")
                                 .font(.system(size: 25))
-                                .foregroundColor(Color.black)
+                                .foregroundColor((viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized) ? Color.red : Color.black)
                             
                         }
                         .padding()
@@ -735,7 +735,7 @@ struct HelpMenuView: View {
                 .font(.system(size: 20))
 
                 
-                Text("Toggles On and Off Voice Commands")
+                Text("Toggles On and Off Voice Commands (Turns Red if Currently Recording)")
                 .font(.system(size: 15))
                     .multilineTextAlignment(.center)
                 

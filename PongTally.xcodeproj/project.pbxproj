@@ -261,14 +261,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pong Tally/Preview Content\"";
-				DEVELOPMENT_TEAM = 3XX9NK3P2X;
+				DEVELOPMENT_TEAM = QDJJF9352Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Pong-Tally-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = PongTally;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access for speech recognition";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app needs speech access for speech recognition for you to be able to change the score using your voice";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow access to your microphone to enable voice recognition features.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Allow speech recognition to listen to commands and control the scoreboard hands-free.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -282,8 +282,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = "hunacenterprises.Pong-Tally";
+				MARKETING_VERSION = 1.3.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hunacenterprises.pongtally;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -299,14 +299,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pong Tally/Preview Content\"";
-				DEVELOPMENT_TEAM = 3XX9NK3P2X;
+				DEVELOPMENT_TEAM = QDJJF9352Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Pong-Tally-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = PongTally;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access for speech recognition";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app needs speech access for speech recognition for you to be able to change the score using your voice";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow access to your microphone to enable voice recognition features.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Allow speech recognition to listen to commands and control the scoreboard hands-free.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -320,8 +320,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
-				PRODUCT_BUNDLE_IDENTIFIER = "hunacenterprises.Pong-Tally";
+				MARKETING_VERSION = 1.3.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hunacenterprises.pongtally;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
