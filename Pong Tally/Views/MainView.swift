@@ -33,8 +33,14 @@ struct MainView: View {
     @State private var isServerNumberEditing: Bool = false
     @State private var newServerNumber: String = ""
     
+    @State private var showingMicPrivacyAlert: Bool = false
+    
+    
+    
     
     let heavyhapticGenerator = UIImpactFeedbackGenerator(style: .heavy)
+    
+    
 
     
 
@@ -268,23 +274,28 @@ struct MainView: View {
                                 viewModel.speechRecognitionStatus.toggle()
                                 viewModel.stopListening()
                             } else {
-                                if viewModel.speechRecognitionAuthorized {
+                                if viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized {
                                     viewModel.speechRecognitionStatus.toggle()
                                     viewModel.startListening()
                                 }
                             }
                             
+                            if !viewModel.speechRecognitionAuthorized || !viewModel.microphoneAuthorized {
+                                showingMicPrivacyAlert = true
+                            }
+                            
                             print(viewModel.speechRecognitionStatus)
                             
                         } label: {
-                            Image(systemName: (viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized) ? "microphone.fill" : "microphone.slash")
+                            Image(systemName: (viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized) ? "microphone.fill" : "microphone.slash")
                                 .font(.system(size: 25))
-                                .foregroundColor((viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized) ? Color.red : Color.black)
+                                .foregroundColor((viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized) ? Color.red : Color.black)
                             
                         }
                         .padding()
-                        .opacity(viewModel.speechRecognitionAuthorized ? 1 : 0.5)
-                        .disabled(!viewModel.speechRecognitionAuthorized)
+                        .opacity(viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized ? 1 : 0.5)
+                        
+                        
                         
 
                         
@@ -485,12 +496,25 @@ struct MainView: View {
                     }
                         
                 }
+  
             
             }
             .onAppear {
                 heavyhapticGenerator.prepare() // Required for immediate feedback
             }
             .background(.white)
+            .alert(isPresented: $showingMicPrivacyAlert) {
+                  Alert(title: Text("Permisson Error"),
+                        message: Text("Enable Microphone and Speech Recognition under Settings > Privacy. If you believe this is a bug, contact alek@hunacenterprises.com"),
+                        primaryButton: .default(Text("Open Settings"), action: {
+                              if let settingsURL = URL(string: UIApplication.openSettingsURLString),
+                                 UIApplication.shared.canOpenURL(settingsURL) {
+                                  UIApplication.shared.open(settingsURL)
+                              }
+                          }),
+                        secondaryButton: .default(Text("Ok"))
+                  )
+              }
             .sheet(isPresented: $viewModel.gameOver) {
                 GameOverView()
                     .environmentObject(viewModel)
@@ -504,6 +528,7 @@ struct MainView: View {
             
                 
             }
+            
             
         }
         

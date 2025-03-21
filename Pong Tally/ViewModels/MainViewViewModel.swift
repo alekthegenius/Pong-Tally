@@ -47,6 +47,9 @@ class MainViewViewModel: ObservableObject {
     @Published var speechRecognitionStatus: Bool = false
     @Published var speechRecognitionAuthorized: Bool = false
     
+    @Published var microphoneAuthorized: Bool = false
+    
+    
     @Published var gameWinner: Int = 0
     
     @Published var showTeam1BackButton = false
@@ -62,6 +65,8 @@ class MainViewViewModel: ObservableObject {
     @Published var servingIndicators: Bool = true
     @Published var servesPerServer: Int = 2
     @Published var currentNumberOfServes: Int = 0
+    
+    
     
 
     
@@ -135,6 +140,11 @@ class MainViewViewModel: ObservableObject {
         guard !audioEngine.isRunning else { return }
         guard speechRecognitionStatus else { return }
         
+        guard speechRecognitionAuthorized else { return }
+        
+        guard microphoneAuthorized else { return }
+        
+        
         if let recognitionTask = recognitionTask {
             recognitionTask.cancel()
             self.recognitionTask = nil
@@ -160,10 +170,7 @@ class MainViewViewModel: ObservableObject {
 
 
         
-        guard speechRecognitionAuthorized else {
-            print("Speech recognition not authorized")
-            return
-        }
+        
         
         
         
@@ -269,29 +276,33 @@ class MainViewViewModel: ObservableObject {
         SFSpeechRecognizer.requestAuthorization { authStatus in
 
 
-           // The authorization status results in changes to the
-           // app’s interface, so process the results on the app’s
-           // main queue.
-              OperationQueue.main.addOperation {
-                 switch authStatus {
-                    case .authorized:
-                     self.speechRecognitionAuthorized = true
+       // The authorization status results in changes to the
+       // app’s interface, so process the results on the app’s
+       // main queue.
+          OperationQueue.main.addOperation {
+             switch authStatus {
+                case .authorized:
+                 self.speechRecognitionAuthorized = true
 
-
-                    case .denied:
-                     self.speechRecognitionAuthorized = false
-
-                    case .restricted:
-                       self.speechRecognitionAuthorized = false
-
-
-                    case .notDetermined:
-                     self.speechRecognitionAuthorized = false
-                 default:
-                     self.speechRecognitionAuthorized = false
-                 }
-              }
-           }
+             default:
+                 self.speechRecognitionAuthorized = false
+             }
+          }
+       }
+        
+        // Request permission to record.
+        if #available(iOS 17.0, *) {
+            Task { @MainActor in
+                self.microphoneAuthorized = await AVAudioApplication.requestRecordPermission()
+            }
+        } else {
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                OperationQueue.main.addOperation {
+                    self.microphoneAuthorized = granted
+                }
+            }
+        }
+        
     }
     
     func processCommand(_ text: String) {
@@ -406,3 +417,5 @@ class MainViewViewModel: ObservableObject {
     }
     
 }
+
+
