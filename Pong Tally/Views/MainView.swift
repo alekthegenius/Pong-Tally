@@ -234,6 +234,8 @@ struct MainView: View {
                     
                     HStack() { // Align Menu Bar Items
                         
+                        Spacer()
+                        
                         Button { // Help Menu Buttons
                             isHelpMenuShown = true
                         } label: {
@@ -247,12 +249,15 @@ struct MainView: View {
                                     .font(.system(size: 17))
                                     .foregroundColor(Color.black)
                                     .fontWeight(.bold)
-                                    .padding()
+                                    
                             }
+                            
                         }
                         .sheet(isPresented: $isHelpMenuShown) {
                             HelpMenuView()
                         }
+                        
+                        Spacer()
                         
                         Button { // Settings Button
                             isSettingsMenuShown = true
@@ -260,13 +265,14 @@ struct MainView: View {
                             Image(systemName: "gearshape")
                                 .font(.system(size: 25))
                                 .foregroundColor(Color.black)
-                                .padding()
+
                         }
                         .sheet(isPresented: $isSettingsMenuShown) {
                             SettingsView(isGamePointEditing: $isGamePointEditing, newGamePoint: $newGamePoint, isServerNumberEditing: $isServerNumberEditing, newServerNumber: $newServerNumber, showDictationText: $showDictationText)
                                 .environmentObject(viewModel)
                         }
                         
+                        Spacer()
                         
                         Button { // Speech Recognition Toggle Button
                             
@@ -292,12 +298,10 @@ struct MainView: View {
                                 .foregroundColor((viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized) ? Color.red : Color.black)
                             
                         }
-                        .padding()
                         .opacity(viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized ? 1 : 0.5)
                         
                         
-                        
-
+                        Spacer()
                         
                         Button { // Restart Game Button
                             viewModel.showTeam1BackButton = false
@@ -311,7 +315,8 @@ struct MainView: View {
                                 .font(.system(size: 25))
                                 .foregroundColor(Color.black)
                         }
-                        .padding()
+                        
+                        Spacer()
                         
                         Button { // Duce Toggle Button
                             viewModel.winByTwo.toggle()
@@ -320,19 +325,21 @@ struct MainView: View {
                                 Image(systemName: "circlebadge.2.fill")
                                     .font(.system(size: 25))
                                     .foregroundColor(Color.black)
-                                    .padding()
                             } else {
                                 Image(systemName: "circlebadge.2")
                                     .font(.system(size: 25))
                                     .foregroundColor(Color.black)
-                                    .padding()
                             }
                             
                         }
                         
+                        Spacer()
+                        
                     }
                     
+                    
                 }
+                .frame(maxWidth: 500)
                 .frame(height: 60) // Keep Constant Menu Bar Height
                 .zIndex(3)
                 
@@ -748,8 +755,8 @@ struct HelpMenuView: View {
                 .font(.system(size: 20))
      
                 Text("Open up the Settings Menu")
-                .font(.system(size: 15))
-                    .multilineTextAlignment(.center)
+                    .font(.system(size: 15))
+                    .multilineTextAlignment(.leading)
            
             }
             
@@ -773,8 +780,8 @@ struct HelpMenuView: View {
                 .font(.system(size: 20))
 
                 Text("Resets Both of the Team's Scores to Zero")
-                .font(.system(size: 15))
-                    .multilineTextAlignment(.center)
+                    .font(.system(size: 15))
+                    .multilineTextAlignment(.leading)
               
             }
         
@@ -785,8 +792,8 @@ struct HelpMenuView: View {
                 .font(.system(size: 20))
             
                 Text("Duce Mode: Players Have to Win By Two Points")
-                .font(.system(size: 15))
-                    .multilineTextAlignment(.center)
+                    .font(.system(size: 15))
+                    .multilineTextAlignment(.leading)
 
             }
         
