@@ -27,7 +27,7 @@ If you know Swift or are familiar with iOS development and would like to contrib
 If you have any questions or concerns, feel free to send me an email at: alekvasek@icloud.com
 
 ## License
-This project is licensed under the [MIT-License](https://mit-license.org/). Refer to the [LICENSE](LICENSE) file for more details.
+This project is licensed under the [LGPL-2.1 License](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html). Refer to the [LICENSE](LICENSE) file for more details.
 
 ---
 From Texas With ❤️ by Alek Vasek, Copyright 2025
