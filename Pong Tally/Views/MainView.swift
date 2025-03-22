@@ -869,11 +869,53 @@ struct HelpMenuView: View {
             Divider()
                 
                 
-            }
+        }
+        
+        HStack {
+            Text("Voice Recognition Preview")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.black)
+                .padding(.top, 15)
+            
+            Spacer()
+        }
+        
+        
+        
+        VStack(alignment: .leading) {
+            
+            Text("Press and hold to drag around.")
+                .font(.system(size: 15))
+                .foregroundStyle(.black)
+                .padding(.vertical, 5)
+                
+                
+            
+            Divider()
+            
+            
+            
+            
+            Text("Double click to reset position.")
+                .font(.system(size: 15))
+                .foregroundStyle(.black)
+                .padding(.vertical, 5)
+            
+            
+           
+            Divider()
+                
+                
+        }
+        
         
         
 
-        }
+        
+
+    }
+    
+    
     
     
     
@@ -999,7 +1041,7 @@ struct SettingsView: View {
                     } label: {
                         HStack {
                             
-                            Text("Show Dictation Preview")
+                            Text("Show Voice Recognition Preview")
                                 .font(.system(size: 20))
                                 .foregroundStyle(.black)
                                 .padding()
