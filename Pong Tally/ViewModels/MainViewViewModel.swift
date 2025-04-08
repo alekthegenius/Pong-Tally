@@ -9,24 +9,13 @@ import Foundation
 import SwiftUICore
 import Speech
 import SwiftUI
+import TranscriptionKit
 
 class MainViewViewModel: ObservableObject {
     
     
-    private let speechRecognizer = SFSpeechRecognizer()
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AVAudioEngine()
+    @Published var speechRecognizer: SpeechRecognizer = SpeechRecognizer()
     
-    private let audioSession = AVAudioSession.sharedInstance()
-
-    
-    private var lastProcessedCommand: String = ""
-    private var lastCommandTime: Date = Date.distantPast
-    
-
-
-
     
     @Published var team1Score: Int = 0
     @Published var team2Score: Int = 0
@@ -46,7 +35,6 @@ class MainViewViewModel: ObservableObject {
     
     @Published var speechRecognitionStatus: Bool = false
     @Published var speechRecognitionAuthorized: Bool = false
-    
     @Published var microphoneAuthorized: Bool = false
     
     
@@ -68,25 +56,15 @@ class MainViewViewModel: ObservableObject {
     
     
     
-
-    
-    
-    
-    
-
-    
     init() {
-        requestSpeechAuthorization()
         changeScreenMode(screenMode: 1)
-
-    }
-    
-    deinit {
-        stopListening()
         
 
     }
     
+    
+    
+        
     func changeScreenMode(screenMode: Int) {
         screenActivityMode = screenMode
         if screenMode == 1 {
@@ -135,180 +113,11 @@ class MainViewViewModel: ObservableObject {
         }
     }
     
-    func startListening() {
-        print("Start Listening")
-        guard !audioEngine.isRunning else { return }
-        guard speechRecognitionStatus else { return }
-        
-        guard speechRecognitionAuthorized else { return }
-        
-        guard microphoneAuthorized else { return }
-        
-        
-        if let recognitionTask = recognitionTask {
-            recognitionTask.cancel()
-            self.recognitionTask = nil
-        }
-        
-
-        
-        do {
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            print("Audio session error: \(error)")
-            return
-        }
-        
-        let inputNode = audioEngine.inputNode
-        
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
-        //recognitionRequest.shouldReportPartialResults = true
-        recognitionRequest.requiresOnDeviceRecognition = false
-        
-
-
-        
-        
-        
-        
-        
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-            guard let self = self else { return }
-            
-            if error != nil {
-                if let error = error as NSError? {
-                    print("ERROR: \(error)")
-                    // Handle specific error codes
-                    if error.code == 1110 || error.code == 301 {
-                        
-                    } else {
-                        self.stopListening()
-                        return
-                    }
-                    
-                }
-                
-            }
-            
-            print("Recongition Task Active")
-            var isFinal = false
-            
-
-            
-            
-            if let result = result {
-                // Update the text view with the results.
-                
-                let command  = result.bestTranscription.formattedString.lowercased()
-                isFinal = result.isFinal
-                print("command: \(command)")
-                
-                self.processCommand(command)
-                
-                
-
-                
-                
-                
-                
-            }
-            
-           
-            if isFinal {
-                self.stopListening()
-                
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    
-                    
-                    self.startListening()
-                    
-                }
-                
-            }
-        }
-        
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-            self.recognitionRequest?.append(buffer)
-        }
-
-
-        audioEngine.prepare()
-        
-        
-        do {
-            try audioEngine.start()
-           
-        } catch {
-            print("Engine start failed: \(error)")
-            return
-        }
-           
-    }
-    
-    
-    func stopListening() {
-        print("Stop Listening")
-        self.recognitionTask?.cancel()
-
-        self.audioEngine.stop()
-        self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.recognitionRequest?.endAudio()
-    
-        
-        do {
-           try audioSession.setActive(false)
-        } catch {
-           print("Deactivation error: \(error)")
-        }
-        
-        self.recognitionRequest = nil
-        self.recognitionTask = nil
-        
-
-    }
-    
-    
-    func requestSpeechAuthorization() {
-        SFSpeechRecognizer.requestAuthorization { authStatus in
-
-
-       // The authorization status results in changes to the
-       // app’s interface, so process the results on the app’s
-       // main queue.
-          OperationQueue.main.addOperation {
-             switch authStatus {
-                case .authorized:
-                 self.speechRecognitionAuthorized = true
-
-             default:
-                 self.speechRecognitionAuthorized = false
-             }
-          }
-       }
-        
-        // Request permission to record.
-        if #available(iOS 17.0, *) {
-            Task { @MainActor in
-                self.microphoneAuthorized = await AVAudioApplication.requestRecordPermission()
-            }
-        } else {
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                OperationQueue.main.addOperation {
-                    self.microphoneAuthorized = granted
-                }
-            }
-        }
-        
-    }
-    
+   
     func processCommand(_ text: String) {
 
         
-        let newCommand = text.replacingOccurrences(of: lastProcessedCommand, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let newCommand = text.replacingOccurrences(of: "lastProcessedCommand", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
         
         
         guard !newCommand.isEmpty else { return }
@@ -351,7 +160,7 @@ class MainViewViewModel: ObservableObject {
                     gameOver = true
                 }
             }
-            lastProcessedCommand = text
+            //lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam2) score"):
@@ -368,31 +177,23 @@ class MainViewViewModel: ObservableObject {
                     gameOver = true
                 }
             }
-            lastProcessedCommand = text
+            //lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam1) loss"):
             self.decreaseTeam1()
-            lastProcessedCommand = text
+            //lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam2) loss"):
             self.decreaseTeam2()
-            lastProcessedCommand = text
+            //lastProcessedCommand = text
             
             
         case let str where str.contains("restart game"):
             self.resetScore()
-            lastProcessedCommand = text
-            
-            
-        case let str where str.contains("stop voice commands"):
-            self.speechRecognitionStatus = false
-            self.stopListening()
-            lastProcessedCommand = text
-            
-            
-            
+            //lastProcessedCommand = text
+
             
         default:
             break

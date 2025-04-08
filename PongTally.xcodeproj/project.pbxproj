@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0D20692D944D56006DF27B /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B0D20682D944D56006DF27B /* TranscriptionKit */; };
+		8B0D206C2D944EEC006DF27B /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B0D206B2D944EEC006DF27B /* TranscriptionKit */; };
+		8B0D206E2D944F39006DF27B /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B0D206D2D944F39006DF27B /* TranscriptionKit */; };
+		8B0D20712D944F5B006DF27B /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B0D20702D944F5B006DF27B /* TranscriptionKit */; };
+		8B0D20742D94509C006DF27B /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B0D20732D94509C006DF27B /* TranscriptionKit */; };
+		8B0D20772D94513E006DF27B /* TranscriptionKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8B0D20762D94513E006DF27B /* TranscriptionKit */; };
 		8BD0762E2D35607B00A335B9 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8BD0762D2D35607B00A335B9 /* ConfettiSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -27,7 +33,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B0D206E2D944F39006DF27B /* TranscriptionKit in Frameworks */,
+				8B0D20772D94513E006DF27B /* TranscriptionKit in Frameworks */,
+				8B0D20692D944D56006DF27B /* TranscriptionKit in Frameworks */,
+				8B0D20742D94509C006DF27B /* TranscriptionKit in Frameworks */,
 				8BD0762E2D35607B00A335B9 /* ConfettiSwiftUI in Frameworks */,
+				8B0D206C2D944EEC006DF27B /* TranscriptionKit in Frameworks */,
+				8B0D20712D944F5B006DF27B /* TranscriptionKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +83,12 @@
 			name = PongTally;
 			packageProductDependencies = (
 				8BD0762D2D35607B00A335B9 /* ConfettiSwiftUI */,
+				8B0D20682D944D56006DF27B /* TranscriptionKit */,
+				8B0D206B2D944EEC006DF27B /* TranscriptionKit */,
+				8B0D206D2D944F39006DF27B /* TranscriptionKit */,
+				8B0D20702D944F5B006DF27B /* TranscriptionKit */,
+				8B0D20732D94509C006DF27B /* TranscriptionKit */,
+				8B0D20762D94513E006DF27B /* TranscriptionKit */,
 			);
 			productName = "Pong Tally";
 			productReference = 8B983EC52D349B2A00B26DF4 /* PongTally.app */;
@@ -102,6 +120,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				8BD0762C2D35607B00A335B9 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				8B0D20752D94513E006DF27B /* XCLocalSwiftPackageReference "../TranscriptionKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8B983EC62D349B2A00B26DF4 /* Products */;
@@ -352,6 +371,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		8B0D20752D94513E006DF27B /* XCLocalSwiftPackageReference "../TranscriptionKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../TranscriptionKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		8BD0762C2D35607B00A335B9 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -364,6 +390,30 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8B0D20682D944D56006DF27B /* TranscriptionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TranscriptionKit;
+		};
+		8B0D206B2D944EEC006DF27B /* TranscriptionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TranscriptionKit;
+		};
+		8B0D206D2D944F39006DF27B /* TranscriptionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TranscriptionKit;
+		};
+		8B0D20702D944F5B006DF27B /* TranscriptionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TranscriptionKit;
+		};
+		8B0D20732D94509C006DF27B /* TranscriptionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TranscriptionKit;
+		};
+		8B0D20762D94513E006DF27B /* TranscriptionKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TranscriptionKit;
+		};
 		8BD0762D2D35607B00A335B9 /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8BD0762C2D35607B00A335B9 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
