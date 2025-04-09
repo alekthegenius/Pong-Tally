@@ -1,4 +1,4 @@
-![PongTallyLogo](https://github.com/alekthegenius/Pong-Tally/blob/main/pong-tally-repo-logo.png)
+![PongTallyLogo](https://github.com/alekthegenius/Pong-Tally/blob/main/pong-tally-repo-image.png)
 # PongTally
 **An App to Keep Tally of Your Games**
 
