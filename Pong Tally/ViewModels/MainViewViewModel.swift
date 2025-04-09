@@ -9,12 +9,8 @@ import Foundation
 import SwiftUICore
 import Speech
 import SwiftUI
-import TranscriptionKit
 
 class MainViewViewModel: ObservableObject {
-    
-    
-    @Published var speechRecognizer: SpeechRecognizer = SpeechRecognizer()
     
     
     @Published var team1Score: Int = 0
@@ -46,7 +42,6 @@ class MainViewViewModel: ObservableObject {
     @Published var text1Color: Color = Color(UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0))
     @Published var text2Color: Color = Color(UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0))
     
-    @Published var dictatedText: String = ""
     
     
     @Published var servingTeam: Int = 1
@@ -54,12 +49,15 @@ class MainViewViewModel: ObservableObject {
     @Published var servesPerServer: Int = 2
     @Published var currentNumberOfServes: Int = 0
     
+    var lastProcessedCommand = ""
+    
     
     
     init() {
         changeScreenMode(screenMode: 1)
         
-
+        
+        
     }
     
     
@@ -117,7 +115,7 @@ class MainViewViewModel: ObservableObject {
     func processCommand(_ text: String) {
 
         
-        let newCommand = text.replacingOccurrences(of: "lastProcessedCommand", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let newCommand = text.replacingOccurrences(of: lastProcessedCommand, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
         
         
         guard !newCommand.isEmpty else { return }
@@ -125,7 +123,6 @@ class MainViewViewModel: ObservableObject {
         let lastWord = newCommand.split(separator: " ").last
         
         
-        dictatedText.append(" " + (lastWord ?? "") + " ")
         
         
         
@@ -160,7 +157,7 @@ class MainViewViewModel: ObservableObject {
                     gameOver = true
                 }
             }
-            //lastProcessedCommand = text
+            lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam2) score"):
@@ -177,22 +174,22 @@ class MainViewViewModel: ObservableObject {
                     gameOver = true
                 }
             }
-            //lastProcessedCommand = text
+            lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam1) loss"):
             self.decreaseTeam1()
-            //lastProcessedCommand = text
+            lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam2) loss"):
             self.decreaseTeam2()
-            //lastProcessedCommand = text
+            lastProcessedCommand = text
             
             
         case let str where str.contains("restart game"):
             self.resetScore()
-            //lastProcessedCommand = text
+            lastProcessedCommand = text
 
             
         default:
@@ -213,6 +210,7 @@ class MainViewViewModel: ObservableObject {
             }
             return word
         }
+        
         
         return words.joined(separator: " ")
     }

@@ -12,6 +12,8 @@ struct MainView: View {
     
     @StateObject var viewModel = MainViewViewModel()
     
+    @StateObject var speechRecognizer = SpeechRecognizer()
+    
     @State private var newTeamName: String = ""
     
     @State private var isTeam1TitleEditing: Bool = false
@@ -277,14 +279,14 @@ struct MainView: View {
                         
                         Button { // Speech Recognition Toggle Button
                             
-                            if !viewModel.speechRecognizer.speechRecognitionAuthorized || !viewModel.speechRecognizer.microphoneAuthorized {
+                            if !speechRecognizer.speechRecognitionAuthorized || !speechRecognizer.microphoneAuthorized {
                                 showingMicPrivacyAlert = true
                             } else {
                                 if isRecording {
-                                    viewModel.speechRecognizer.stopTranscribing()
+                                    speechRecognizer.stopTranscribing()
                                     isRecording.toggle()
                                 } else {
-                                    viewModel.speechRecognizer.startTranscribing()
+                                    speechRecognizer.startTranscribing()
                                     isRecording.toggle()
                                     
                                 }
@@ -295,16 +297,16 @@ struct MainView: View {
 
                             
                             print("Speech Status: \(isRecording)")
-                            print("Speech Authorization Status: \(viewModel.speechRecognizer.speechRecognitionAuthorized)")
-                            print("Mic Authorization Status: \(viewModel.speechRecognizer.microphoneAuthorized)")
+                            print("Speech Authorization Status: \(speechRecognizer.speechRecognitionAuthorized)")
+                            print("Mic Authorization Status: \(speechRecognizer.microphoneAuthorized)")
                             
                         } label: {
-                            Image(systemName: (isRecording && viewModel.speechRecognizer.speechRecognitionAuthorized && viewModel.speechRecognizer.microphoneAuthorized) ? "microphone.fill" : "microphone.slash")
+                            Image(systemName: (isRecording && speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized) ? "microphone.fill" : "microphone.slash")
                                 .font(.system(size: 25))
-                                .foregroundColor((isRecording && viewModel.speechRecognizer.speechRecognitionAuthorized && viewModel.speechRecognizer.microphoneAuthorized) ? Color.red : Color.black)
+                                .foregroundColor((isRecording && speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized) ? Color.red : Color.black)
                             
                         }
-                        .opacity(viewModel.speechRecognizer.speechRecognitionAuthorized && viewModel.speechRecognizer.microphoneAuthorized ? 1 : 0.5)
+                        .opacity(speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized ? 1 : 0.5)
                         
                         
                         Spacer()
@@ -513,7 +515,7 @@ struct MainView: View {
             
             }
             .onAppear {
-                viewModel.speechRecognizer.resetTranscript()
+                speechRecognizer.resetTranscript()
             }
             .background(.white)
             .alert(isPresented: $showingMicPrivacyAlert) {
@@ -532,9 +534,12 @@ struct MainView: View {
                 GameOverView()
                     .environmentObject(viewModel)
             }
+            .onChange(of: speechRecognizer.transcript) {
+                viewModel.processCommand(speechRecognizer.transcript)
+            }
             
             if isRecording == true && showDictationText == true {
-                SpeechRecognitionView(dictatedText: viewModel.speechRecognizer.transcript)
+                SpeechRecognitionView(dictatedText: $speechRecognizer.transcript)
                 
             }
             

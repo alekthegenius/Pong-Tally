@@ -12,7 +12,7 @@ struct SpeechRecognitionView: View {
 
     @State private var dragAmount: CGPoint?
     
-    @State var dictatedText: String
+    @Binding var dictatedText: String
     
     
     
@@ -84,5 +84,5 @@ struct SpeechRecognitionView: View {
 }
 
 #Preview {
-    SpeechRecognitionView(dictatedText: "Team 1 Score, Team 2 Score, Restart Game...")
+    SpeechRecognitionView(dictatedText: .constant("Team 1 Score, Team 2 Score, Restart Game..."))
 }
