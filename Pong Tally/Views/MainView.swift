@@ -8,10 +8,11 @@
 import SwiftUI
 import ConfettiSwiftUI
 
-
 struct MainView: View {
     
     @StateObject var viewModel = MainViewViewModel()
+    
+    @StateObject var speechRecognizer = SpeechRecognizer()
     
     @State private var newTeamName: String = ""
     
@@ -35,6 +36,8 @@ struct MainView: View {
     
     @State private var showingMicPrivacyAlert: Bool = false
     
+    
+    @State private var isRecording: Bool = false
     
     
     
@@ -276,29 +279,34 @@ struct MainView: View {
                         
                         Button { // Speech Recognition Toggle Button
                             
-                            if viewModel.speechRecognitionStatus {
-                                viewModel.speechRecognitionStatus.toggle()
-                                viewModel.stopListening()
+                            if !speechRecognizer.speechRecognitionAuthorized || !speechRecognizer.microphoneAuthorized {
+                                showingMicPrivacyAlert = true
                             } else {
-                                if viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized {
-                                    viewModel.speechRecognitionStatus.toggle()
-                                    viewModel.startListening()
+                                if isRecording {
+                                    speechRecognizer.stopTranscribing()
+                                    isRecording.toggle()
+                                } else {
+                                    speechRecognizer.startTranscribing()
+                                    isRecording.toggle()
+                                    
                                 }
                             }
                             
-                            if !viewModel.speechRecognitionAuthorized || !viewModel.microphoneAuthorized {
-                                showingMicPrivacyAlert = true
-                            }
                             
-                            print(viewModel.speechRecognitionStatus)
+                            
+
+                            
+                            print("Speech Status: \(isRecording)")
+                            print("Speech Authorization Status: \(speechRecognizer.speechRecognitionAuthorized)")
+                            print("Mic Authorization Status: \(speechRecognizer.microphoneAuthorized)")
                             
                         } label: {
-                            Image(systemName: (viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized) ? "microphone.fill" : "microphone.slash")
+                            Image(systemName: (isRecording && speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized) ? "microphone.fill" : "microphone.slash")
                                 .font(.system(size: 25))
-                                .foregroundColor((viewModel.speechRecognitionStatus && viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized) ? Color.red : Color.black)
+                                .foregroundColor((isRecording && speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized) ? Color.red : Color.black)
                             
                         }
-                        .opacity(viewModel.speechRecognitionAuthorized && viewModel.microphoneAuthorized ? 1 : 0.5)
+                        .opacity(speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized ? 1 : 0.5)
                         
                         
                         Spacer()
@@ -507,7 +515,7 @@ struct MainView: View {
             
             }
             .onAppear {
-                heavyhapticGenerator.prepare() // Required for immediate feedback
+                speechRecognizer.resetTranscript()
             }
             .background(.white)
             .alert(isPresented: $showingMicPrivacyAlert) {
@@ -526,13 +534,12 @@ struct MainView: View {
                 GameOverView()
                     .environmentObject(viewModel)
             }
+            .onChange(of: speechRecognizer.transcript) {
+                viewModel.processCommand(speechRecognizer.transcript)
+            }
             
-            if viewModel.speechRecognitionStatus == true && showDictationText == true{
-                
-                
-                SpeechRecognitionView(viewModel: viewModel)
-                    
-            
+            if isRecording == true && showDictationText == true {
+                SpeechRecognitionView(dictatedText: $speechRecognizer.transcript)
                 
             }
             

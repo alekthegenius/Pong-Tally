@@ -9,8 +9,10 @@ import SwiftUI
 
 struct SpeechRecognitionView: View {
     
-    @ObservedObject var viewModel: MainViewViewModel
+
     @State private var dragAmount: CGPoint?
+    
+    @Binding var dictatedText: String
     
     
     
@@ -33,7 +35,7 @@ struct SpeechRecognitionView: View {
                     
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
-                            Text(viewModel.dictatedText)
+                            Text(dictatedText)
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(.black)
                                 .id("voiceText")
@@ -45,7 +47,7 @@ struct SpeechRecognitionView: View {
                                 proxy.scrollTo("voiceText", anchor: .trailing)
                             }
                         }
-                        .onChange(of: viewModel.dictatedText) {
+                        .onChange(of: dictatedText) {
                             withAnimation {
                                 proxy.scrollTo("voiceText", anchor: .trailing)
                             }
@@ -82,5 +84,5 @@ struct SpeechRecognitionView: View {
 }
 
 #Preview {
-    SpeechRecognitionView(viewModel: MainViewViewModel())
+    SpeechRecognitionView(dictatedText: .constant("Team 1 Score, Team 2 Score, Restart Game..."))
 }
