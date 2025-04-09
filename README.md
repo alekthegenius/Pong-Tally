@@ -24,7 +24,7 @@ Ok, now with all of that marketing jargon out of the way, let me talk about why 
 If you know Swift or are familiar with iOS development and would like to contribute to this project, then feel free to fork this project and start a pull request! If you don't know where to begin, then here is an excellence resource on contributing to projects: [First-Contributions](https://github.com/firstcontributions/first-contributions)
 
 ## Support
-If you have any questions or concerns, feel free to send me an email at: alekvasek@icloud.com
+If you have any questions or concerns, feel free to send me an email at: alek@hunacenterprises.com
 
 ## License
 This project is licensed under the [LGPL-2.1 License](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html). Refer to the [LICENSE](LICENSE) file for more details.
