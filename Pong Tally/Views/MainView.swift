@@ -861,19 +861,6 @@ struct HelpMenuView: View {
             
             Divider()
             
-            HStack {
-                Text("stop voice commands:")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.black)
-                    .padding(.vertical, 5)
-                Text("Stop listening for voice commands")
-                    .font(.system(size: 15))
-                    .foregroundStyle(.black)
-                    .padding(.vertical, 5)
-            }
-            
-           
-            Divider()
                 
                 
         }
