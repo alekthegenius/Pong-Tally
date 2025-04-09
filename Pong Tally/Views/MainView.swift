@@ -143,24 +143,7 @@ struct MainView: View {
                             Spacer()
                             
                             Button { // Score Loss Button
-                                if viewModel.team1Score > 0 {
-                                    viewModel.decreaseTeam1()
-                                    
-                                    print(viewModel.currentNumberOfServes)
-                                    
-                                    if viewModel.currentNumberOfServes > 0 {
-                                        viewModel.currentNumberOfServes -= 1
-                                    } else if viewModel.currentNumberOfServes == 0 {
-                                        viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
-                                        viewModel.currentNumberOfServes = viewModel.servesPerServer - 1
-                                    }
-                                } else {
-                                    viewModel.showTeam1BackButton = false
-                                }
-                                
-                                if viewModel.team1Score == 0 {
-                                    viewModel.showTeam1BackButton = false
-                                }
+                                viewModel.decreaseTeam1()
                                 
                             } label: {
                                 Image(systemName: "arrowshape.turn.up.backward")
@@ -296,9 +279,9 @@ struct MainView: View {
                             
 
                             
-                            print("Speech Status: \(isRecording)")
-                            print("Speech Authorization Status: \(speechRecognizer.speechRecognitionAuthorized)")
-                            print("Mic Authorization Status: \(speechRecognizer.microphoneAuthorized)")
+                            //print("Speech Status: \(isRecording)")
+                            //print("Speech Authorization Status: \(speechRecognizer.speechRecognitionAuthorized)")
+                            //print("Mic Authorization Status: \(speechRecognizer.microphoneAuthorized)")
                             
                         } label: {
                             Image(systemName: (isRecording && speechRecognizer.speechRecognitionAuthorized && speechRecognizer.microphoneAuthorized) ? "microphone.fill" : "microphone.slash")
@@ -436,24 +419,7 @@ struct MainView: View {
                             Spacer()
                             
                             Button { // Score Loss Button
-                                if viewModel.team2Score > 0 {
-                                    viewModel.decreaseTeam2()
-                                    
-                                    print(viewModel.currentNumberOfServes)
-                                    
-                                    if viewModel.currentNumberOfServes > 0 {
-                                        viewModel.currentNumberOfServes -= 1
-                                    } else if viewModel.currentNumberOfServes == 0 {
-                                        viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
-                                        viewModel.currentNumberOfServes = viewModel.servesPerServer - 1
-                                    }
-                                } else {
-                                    viewModel.showTeam2BackButton = false
-                                }
-                                
-                                if viewModel.team2Score == 0 {
-                                    viewModel.showTeam2BackButton = false
-                                }
+                                viewModel.decreaseTeam2()
                                 
                             } label: {
                                 Image(systemName: "arrowshape.turn.up.backward")
@@ -553,118 +519,13 @@ struct MainView: View {
     
     func teamOneScore() {
         heavyhapticGenerator.impactOccurred(intensity: 1)
-        
         viewModel.increaseTeam1()
-        
-        if (viewModel.team1Score >= viewModel.gamePoint - 1) && (viewModel.team2Score >= viewModel.gamePoint - 1){ // Check for Duce
-            
-            if viewModel.team1Score > viewModel.team2Score {
-                
-                viewModel.servingTeam = 2
-            } else if viewModel.team2Score > viewModel.team1Score {
-                
-                viewModel.servingTeam = 1
-            } else {
-                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
-            }
-            
-        } else if (viewModel.team1Score == viewModel.gamePoint - 1) && !(viewModel.team2Score == viewModel.gamePoint - 1) {
-            viewModel.servingTeam = 2
-        } else if (viewModel.team2Score == viewModel.gamePoint - 1) && !(viewModel.team1Score == viewModel.gamePoint - 1) {
-            viewModel.servingTeam = 1
-        } else {
-            if viewModel.currentNumberOfServes < viewModel.servesPerServer {
-                viewModel.currentNumberOfServes += 1
-            }
-            
-            if viewModel.currentNumberOfServes == viewModel.servesPerServer {
-                viewModel.currentNumberOfServes = 0
-                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
-            }
-        }
-        
-            
-        
-        if viewModel.team1Score > 0 {
-            viewModel.showTeam1BackButton = true
-        }
-        if (viewModel.team1Score >= viewModel.gamePoint){
-            if viewModel.winByTwo && ((viewModel.team1Score - viewModel.team2Score) >= 2){
-                
-                viewModel.gameWinner = 1
-                viewModel.showTeam1BackButton = false
-                viewModel.showTeam2BackButton = false
-                viewModel.gameOver = true
-                
-                viewModel.currentNumberOfServes = 0
-            } else if !viewModel.winByTwo {
-                viewModel.gameWinner = 1
-                viewModel.showTeam1BackButton = false
-                viewModel.showTeam2BackButton = false
-                viewModel.gameOver = true
-                viewModel.currentNumberOfServes = 0
-            }
-        }
     }
     
     func teamTwoScore() {
         heavyhapticGenerator.impactOccurred(intensity: 1)
         viewModel.increaseTeam2()
-        
-        
-        
-        
-        if (viewModel.team1Score >= viewModel.gamePoint - 1) && (viewModel.team2Score >= viewModel.gamePoint - 1){ // Check for Duce
-            
-            if viewModel.team1Score > viewModel.team2Score {
-                
-                viewModel.servingTeam = 2
-            } else if viewModel.team2Score > viewModel.team1Score {
-                
-                viewModel.servingTeam = 1
-            } else {
-                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
-            }
-            
-        } else if (viewModel.team1Score == viewModel.gamePoint - 1) && !(viewModel.team2Score == viewModel.gamePoint - 1) {
-            viewModel.servingTeam = 2
-        } else if (viewModel.team2Score == viewModel.gamePoint - 1) && !(viewModel.team1Score == viewModel.gamePoint - 1) {
-            viewModel.servingTeam = 1
-        } else {
-            if viewModel.currentNumberOfServes < viewModel.servesPerServer {
-                viewModel.currentNumberOfServes += 1
-            }
-            
-            if viewModel.currentNumberOfServes == viewModel.servesPerServer {
-                viewModel.currentNumberOfServes = 0
-                viewModel.servingTeam = viewModel.servingTeam == 1 ? 2 : 1
-            }
-        }
-        
-        if viewModel.team2Score > 0 {
-            viewModel.showTeam2BackButton = true
-        }
-        
-        if (viewModel.team2Score >= viewModel.gamePoint){
-            if viewModel.winByTwo && ((viewModel.team2Score - viewModel.team1Score) >= 2){
-                
-                viewModel.gameWinner = 2
-                viewModel.showTeam1BackButton = false
-                viewModel.showTeam2BackButton = false
-                viewModel.gameOver = true
-                viewModel.currentNumberOfServes = 0
-            } else if !viewModel.winByTwo {
-                viewModel.gameWinner = 2
-                viewModel.showTeam1BackButton = false
-                viewModel.showTeam2BackButton = false
-                viewModel.gameOver = true
-                viewModel.currentNumberOfServes = 0
-            }
-        }
     }
-    
-    
-    
 }
 
 

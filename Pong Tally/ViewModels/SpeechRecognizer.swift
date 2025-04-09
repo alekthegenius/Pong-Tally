@@ -43,7 +43,7 @@ class SpeechRecognizer: ObservableObject {
      requests access to the speech recognizer and the microphone.
      */
     init()  {
-        print("Initalizing SpeechRecognizer")
+        //print("Initalizing SpeechRecognizer")
         
         recognizer = SFSpeechRecognizer()
         guard recognizer != nil else {
@@ -70,19 +70,19 @@ class SpeechRecognizer: ObservableObject {
     }
         
     @MainActor public func startTranscribing() {
-        print("Starting Transciption")
+        //print("Starting Transciption")
         transcribe()
         
     }
     
     @MainActor public func resetTranscript() {
-        print("Resetting Transcription")
+        //print("Resetting Transcription")
         reset()
         
     }
     
     @MainActor public func stopTranscribing() {
-        print("Stopping Transciption")
+        //print("Stopping Transciption")
         reset()
         
     }
@@ -156,14 +156,14 @@ class SpeechRecognizer: ObservableObject {
     private func transcribe(_ message: String) {
         Task { @MainActor in
             transcript = message
-            print(transcript)
+            //print(transcript)
         }
         
     }
     
     private func transcribe(_ error: Error) {
         var errorType = ""
-        print(error.localizedDescription)
+        //print(error.localizedDescription)
         if let error = error as? RecognizerError {
             if error.message == "Not authorized to recognize speech" {
                 errorType = "speech_permission"

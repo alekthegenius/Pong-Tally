@@ -84,21 +84,153 @@ class MainViewViewModel: ObservableObject {
     
     func increaseTeam1() {
         team1Score += 1
+        
+        if (team1Score >= gamePoint - 1) && (team2Score >= gamePoint - 1){  // Check for Duce
+            
+            if team1Score > team2Score {
+                
+                servingTeam = 2
+            } else if team2Score > team1Score {
+                
+                servingTeam = 1
+            } else {
+                servingTeam = servingTeam == 1 ? 2 : 1
+            }
+            
+        } else if (team1Score == gamePoint - 1) && !(team2Score == gamePoint - 1) {
+            servingTeam = 2
+        } else if (team2Score == gamePoint - 1) && !(team1Score == gamePoint - 1) {
+            servingTeam = 1
+        } else {
+            if currentNumberOfServes < servesPerServer {
+                currentNumberOfServes += 1
+            }
+            
+            if currentNumberOfServes == servesPerServer {
+                currentNumberOfServes = 0
+                servingTeam = servingTeam == 1 ? 2 : 1
+            }
+        }
+        
+        if team1Score > 0 {
+            showTeam1BackButton = true
+        }
+        
+        if (team1Score >= gamePoint){
+            if winByTwo && ((team1Score - team2Score) >= 2){
+                
+                gameWinner = 1
+                showTeam1BackButton = false
+                showTeam2BackButton = false
+                gameOver = true
+                
+                currentNumberOfServes = 0
+            } else if !winByTwo {
+                gameWinner = 1
+                showTeam1BackButton = false
+                showTeam2BackButton = false
+                gameOver = true
+                currentNumberOfServes = 0
+            }
+        }
     }
     
     func decreaseTeam1() {
+        
+        
         if team1Score > 0 {
             team1Score -= 1
+            
+            //print(currentNumberOfServes)
+            
+            if currentNumberOfServes > 0 {
+                currentNumberOfServes -= 1
+            } else if currentNumberOfServes == 0 {
+                servingTeam = servingTeam == 1 ? 2 : 1
+                currentNumberOfServes = servesPerServer - 1
+            }
+        } else {
+            showTeam1BackButton = false
+        }
+        
+        if team1Score == 0 {
+            showTeam1BackButton = false
         }
     }
     
     func increaseTeam2() {
         team2Score += 1
+        
+        if (team1Score >= gamePoint - 1) && (team2Score >= gamePoint - 1){ // Check for Duce
+            
+            if team1Score > team2Score {
+                
+                servingTeam = 2
+            } else if team2Score > team1Score {
+                
+                servingTeam = 1
+            } else {
+                servingTeam = servingTeam == 1 ? 2 : 1
+            }
+            
+        } else if (team1Score == gamePoint - 1) && !(team2Score == gamePoint - 1) {
+            servingTeam = 2
+        } else if (team2Score == gamePoint - 1) && !(team1Score == gamePoint - 1) {
+            servingTeam = 1
+        } else {
+            if currentNumberOfServes < servesPerServer {
+                currentNumberOfServes += 1
+            }
+            
+            if currentNumberOfServes == servesPerServer {
+                currentNumberOfServes = 0
+                servingTeam = servingTeam == 1 ? 2 : 1
+            }
+        }
+        
+        if team2Score > 0 {
+            showTeam2BackButton = true
+        }
+        
+        if (team2Score >= gamePoint){
+            if winByTwo && ((team2Score - team1Score) >= 2){
+                
+                gameWinner = 2
+                showTeam1BackButton = false
+                showTeam2BackButton = false
+                gameOver = true
+                currentNumberOfServes = 0
+            } else if !winByTwo {
+                gameWinner = 2
+                showTeam1BackButton = false
+                showTeam2BackButton = false
+                gameOver = true
+                currentNumberOfServes = 0
+            }
+        }
+        
     }
     
     func decreaseTeam2() {
+
+        
         if team2Score > 0 {
             team2Score -= 1
+            
+            //print(currentNumberOfServes)
+            
+            if currentNumberOfServes > 0 {
+                currentNumberOfServes -= 1
+            } else if currentNumberOfServes == 0 {
+                servingTeam = servingTeam == 1 ? 2 : 1
+                currentNumberOfServes = servesPerServer - 1
+            }
+        } else {
+            showTeam2BackButton = false
+        }
+        
+        if team2Score == 0 {
+            showTeam2BackButton = false
         }
     }
     
@@ -120,22 +252,21 @@ class MainViewViewModel: ObservableObject {
         
         guard !newCommand.isEmpty else { return }
         
-        let lastWord = newCommand.split(separator: " ").last
         
         
         
         
         
         
-        print("Processing new command: \(newCommand)")
+        //print("Processing new command: \(newCommand)")
         
         
         
         let convertedTeam1 = convertDigitsToWords(team1Name).lowercased()
         let convertedTeam2 = convertDigitsToWords(team2Name).lowercased()
         
-        print(convertedTeam1)
-        print(convertedTeam2)
+        //print(convertedTeam1)
+        //print(convertedTeam2)
         
 
         
@@ -145,18 +276,7 @@ class MainViewViewModel: ObservableObject {
         case let str where str.contains("\(convertedTeam1) score"):
             
             self.increaseTeam1()
-            if (team1Score >= gamePoint){
-                if winByTwo && ((team1Score - team2Score) >= 2){
-                    
-                    gameWinner = 1
-                    gameOver = true
-                    showTeam1BackButton = false
-                    showTeam2BackButton = false
-                } else if !winByTwo {
-                    gameWinner = 1
-                    gameOver = true
-                }
-            }
+            
             lastProcessedCommand = text
             
             
