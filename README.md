@@ -15,7 +15,7 @@ Ok, now with all of that marketing jargon out of the way, let me talk about why 
  - [x] Make Customizable UI
  - [x] Program Game Logic
  - [X] Create Voice-Recognition
- - [ ] Finalize and Launch on the App Store
+ - [x] Finalize and Launch on the App Store
  - [ ] Create Version 2, with a Tournament Mode, with brackets, serve tracker, and game logs.
  - [x] Use `UIApplication.shared.isIdleTimerDisabled = true` to keep phone awake during a game
 
