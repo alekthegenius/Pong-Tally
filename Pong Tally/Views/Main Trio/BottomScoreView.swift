@@ -21,6 +21,8 @@ struct BottomScoreView: View {
     
     @State private var isSavingColorData: Bool = false
     
+    @Binding var isShowingProfileMenu: Bool
+    
     
     var profile: Profile
     
@@ -51,7 +53,7 @@ struct BottomScoreView: View {
                     
                     Button { // Team Name
                         newTeamName = profile.name
-                        isTeam2TitleEditing = true
+                        isShowingProfileMenu = true
                     } label: {
                         Text("\(profile.name)")
                             .frame(maxHeight: 45)
@@ -62,22 +64,16 @@ struct BottomScoreView: View {
                             .lineLimit(1)
                             
                     }
-                    .alert("Change Team Name", isPresented: $isTeam2TitleEditing) {
-                        TextField("Enter new team name", text: $newTeamName)
-                        Button("Save") {
-                            if !newTeamName.isEmpty {
-                                profile.name = newTeamName
-                            }
-                        }
-                        Button("Cancel", role: .cancel) { }
-                    }
                     .onAppear() {
                         viewModel.team2Name = profile.name
                     }
                     
+                    
                     Spacer()
                     Button() { // Color Settings Button
                         isTeam2ColorEditing = true
+                        newBackgroundColor = Color(uiColor: profile.backgroundColor)
+                        newTextColor = Color(uiColor: profile.textColor)
                     } label: {
                         Circle()
                             .stroke(Color(uiColor: profile.textColor), lineWidth: 5)
@@ -201,6 +197,6 @@ struct BottomScoreView: View {
 }
 
 #Preview {
-    BottomScoreView(profile: Profile(), teamTwoScore: {})
+    BottomScoreView(isShowingProfileMenu: .constant(false), profile: Profile(), teamTwoScore: {})
         .environmentObject(MainViewViewModel())
 }

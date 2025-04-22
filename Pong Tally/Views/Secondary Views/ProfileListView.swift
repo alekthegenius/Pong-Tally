@@ -14,28 +14,93 @@ struct ProfileListView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) var modelContext
     
-    @Binding var currentUser: Int
+    
+    @Binding var currentUser: String
+    @Binding var secondaryUser: String
+    
+    var resetScore: () -> Void
     
     @State private var editMode = EditMode.inactive
+    
+    @State private var isTitleEditing = false
+    @State private var newProfileName: String = "Team Name"
+    @State private var profileBeingEdited: Profile? = nil
+    
+    var activeProfiles: [Profile] {
+        profiles.filter { $0.id == currentUser || $0.id == secondaryUser }
+    }
+
+    var otherProfiles: [Profile] {
+        profiles.filter { $0.id != currentUser && $0.id != secondaryUser }
+    }
     
     var body: some View {
         ZStack {
             Color.white
                 .ignoresSafeArea()
+            
             NavigationStack {
                 VStack {
                     
                     List {
-                        ForEach(profiles) { profile in
-                            profileListItem(profile)
-                                .listRowBackground(Color(uiColor: profile.backgroundColor))
-                        }
+                        Section("Active Profiles") {
+                               ForEach(activeProfiles) { profile in
+                                   if currentUser == profile.id {
+                                       profileListItem(profile: profile, inUse: true)
+                                           .listRowBackground(Color(uiColor: profile.backgroundColor))
+                                   } else {
+                                       profileListItem(profile: profile)
+                                           .listRowBackground(Color(uiColor: profile.backgroundColor))
+                                   }
+                               }
+                           }
+
+                           Section("Other Profiles") {
+                               ForEach(otherProfiles) { profile in
+                                   profileListItem(profile: profile)
+                                       .listRowBackground(Color(uiColor: profile.backgroundColor))
+                               }
+                               .onDelete(perform: deleteProfile)
+                           }
+                        
                         
                     }
+                    
+                    Button {
+                        dismiss()
+                    } label: {
+                        ZStack {
+                            
+                            RoundedRectangle(cornerRadius: 30)
+                                .foregroundStyle(Color.blue)
+                            Text("Close")
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundStyle(Color.white)
+                            
+                            
+                        }
+                        .frame(width: 250, height: 60)
+                            
+                    }
+                    
                     
                     
                 }
                 .listStyle(.automatic)
+                .alert("Change Profile Name", isPresented: $isTitleEditing) {
+                    TextField("Enter Profile Name", text: $newProfileName)
+                        Button("Save") {
+                            if let profile = profileBeingEdited, !newProfileName.isEmpty {
+                                profile.name = newProfileName
+                                profileBeingEdited = nil
+                            }
+                        }
+                        Button("Cancel", role: .cancel) {
+                            profileBeingEdited = nil
+                        }
+                } message: {
+                    Text("Enter a new team name")
+                }
                 .navigationTitle("Profiles")
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -47,7 +112,7 @@ struct ProfileListView: View {
                         if editMode == .inactive{
                             Button {
                                 
-                                
+                                createProfile()
                             } label: {
                                 
                                 Image(systemName: "plus")
@@ -64,26 +129,65 @@ struct ProfileListView: View {
     }
     
     @ViewBuilder
-    func profileListItem(_ profile: Profile) -> some View {
+    func profileListItem(profile: Profile, inUse: Bool = false) -> some View {
         HStack {
-            Text(profile.name)
-                .font(.system(size: 20, weight: .medium))
-            Spacer()
             Button {
+                if !inUse && secondaryUser != profile.id {
+                    currentUser = profile.id
+                    resetScore()
+                }
+            } label: {
+                HStack {
+                    if inUse {
+                        Image(systemName: "star.fill")
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(Color(uiColor: profile.textColor))
+                    }
+                    
+                    Text(profile.name)
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(Color(uiColor: profile.textColor))
+                    
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+            .contentShape(Rectangle())
+            
                 
+            Spacer()
+            
+            Button {
+                newProfileName = profile.name
+                profileBeingEdited = profile
+                isTitleEditing = true
             } label: {
                 Text("Edit")
+                    .foregroundStyle(Color(uiColor: profile.textColor))
             }
+            .buttonStyle(PlainButtonStyle())
+            .contentShape(Rectangle())
         }
+        .contentShape(Rectangle())
     }
     
     func createProfile() {
         let newProfile = Profile()
         
         modelContext.insert(newProfile)
+        
+    }
+    
+    func deleteProfile(_ indexSet: IndexSet) {
+        for index in indexSet {
+            let profile = otherProfiles[index]
+
+            modelContext.delete(profile)
+        }
     }
 }
 
 #Preview {
-    ProfileListView(currentUser: .constant(0))
+    ProfileListView(currentUser: .constant(""), secondaryUser: .constant(""), resetScore: {})
 }

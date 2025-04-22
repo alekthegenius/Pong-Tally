@@ -39,10 +39,13 @@ struct MainView: View {
     
     @State private var isRecording: Bool = false
     
-    @State private var selectedProfileTeam1: String = "team1"
-    @State private var selectedProfileTeam2: String = "team2"
+    @AppStorage("selectedTeam1Profile") private var selectedProfileTeam1: String = "team1"
+    @AppStorage("selectedTeam2Profile") private var selectedProfileTeam2: String = "team2"
+    
+    
 
-
+    @State private var isShowingProfileMenuForTeam1: Bool = false
+    @State private var isShowingProfileMenuForTeam2: Bool = false
     
     
     let heavyhapticGenerator = UIImpactFeedbackGenerator(style: .heavy)
@@ -63,7 +66,7 @@ struct MainView: View {
                 // Top Score View
                 if profiles.count >= 2 {
                     if let selectedProfile = profiles.first(where: { $0.id == selectedProfileTeam1 }) {
-                        TopScoreView(profile: selectedProfile, teamOneScore: teamOneScore)
+                        TopScoreView(isShowingProfileMenu: $isShowingProfileMenuForTeam1, profile: selectedProfile, teamOneScore: teamOneScore)
                             .environmentObject(viewModel)
                     } else {
                         Text("Profile not found")
@@ -82,7 +85,7 @@ struct MainView: View {
                     
                     // Bottom Bar View
                     if let selectedProfile = profiles.first(where: { $0.id == selectedProfileTeam2 }) {
-                        BottomScoreView(profile: selectedProfile, teamTwoScore: teamTwoScore)
+                        BottomScoreView(isShowingProfileMenu: $isShowingProfileMenuForTeam2, profile: selectedProfile, teamTwoScore: teamTwoScore)
                             .environmentObject(viewModel)
                     } else {
                         Text("Profile not found")
@@ -101,8 +104,15 @@ struct MainView: View {
             }
             .onAppear {
                 speechRecognizer.resetTranscript()
-                modelContext.insert(Profile(name: "Team 1", textColor: UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0), backgroundColor: UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0), id: "team1"))
-                modelContext.insert(Profile(name: "Team 2",textColor: UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0), backgroundColor: UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0), id: "team2"))
+                let team1Starter = Profile(name: "Team 1", textColor: UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0), backgroundColor: UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0), id: "team1")
+                let team2Starter = Profile(name: "Team 2",textColor: UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0), backgroundColor: UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0), id: "team2")
+                if !profiles.contains(where: { $0.id == team1Starter.id }) {
+                    modelContext.insert(team1Starter)
+                }
+                
+                if !profiles.contains(where: { $0.id == team2Starter.id }) {
+                    modelContext.insert(team2Starter)
+                }
                 print("Profiles at appear:", profiles)
             }
             .background(.white)
@@ -125,11 +135,19 @@ struct MainView: View {
             .onChange(of: speechRecognizer.transcript) {
                 viewModel.processCommand(speechRecognizer.transcript)
             }
+            .sheet(isPresented: $isShowingProfileMenuForTeam1) {
+                ProfileListView(currentUser: $selectedProfileTeam1, secondaryUser: $selectedProfileTeam2, resetScore: viewModel.resetScore)
+            }
+            .sheet(isPresented: $isShowingProfileMenuForTeam2) {
+                ProfileListView(currentUser: $selectedProfileTeam2, secondaryUser: $selectedProfileTeam1, resetScore: viewModel.resetScore)
+                    
+            }
             
             if isRecording == true && showDictationText == true {
                 SpeechRecognitionView(dictatedText: $speechRecognizer.transcript)
                 
             }
+                
             
             
         }

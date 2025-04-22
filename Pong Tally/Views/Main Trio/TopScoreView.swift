@@ -21,6 +21,8 @@ struct TopScoreView: View {
     
     @State private var isSavingColorData: Bool = false
     
+    @Binding var isShowingProfileMenu: Bool
+    
     var profile: Profile
     
     
@@ -52,7 +54,7 @@ struct TopScoreView: View {
                         
                         Button { // Team Name
                             newTeamName = profile.name
-                            isTeam1TitleEditing = true
+                            isShowingProfileMenu = true
                         } label:{
                             Text("\(profile.name)")
                                 .frame(maxHeight: 45)
@@ -63,15 +65,6 @@ struct TopScoreView: View {
                                 .lineLimit(1)
                             
                         }
-                        .alert("Change Team Name", isPresented: $isTeam1TitleEditing) {
-                            TextField("Enter new team name", text: $newTeamName)
-                            Button("Save") {
-                                if !newTeamName.isEmpty {
-                                    profile.name = newTeamName
-                                }
-                            }
-                            Button("Cancel", role: .cancel) { }
-                        }
                         .onAppear() {
                             viewModel.team1Name = profile.name
                         }
@@ -80,6 +73,8 @@ struct TopScoreView: View {
                         
                         Button { // Color Settings Button
                             isTeam1ColorEditing = true
+                            newBackgroundColor = Color(uiColor: profile.backgroundColor)
+                            newTextColor = Color(uiColor: profile.textColor)
                         } label: {
                             Circle()
                                 .stroke(Color(uiColor: profile.textColor), lineWidth: 5)
@@ -208,6 +203,6 @@ struct TopScoreView: View {
 }
 
 #Preview {
-    TopScoreView(profile: Profile(), teamOneScore: {})
+    TopScoreView(isShowingProfileMenu: .constant(false), profile: Profile(), teamOneScore: {})
         .environmentObject(MainViewViewModel())
 }

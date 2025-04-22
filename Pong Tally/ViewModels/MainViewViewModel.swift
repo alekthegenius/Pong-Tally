@@ -76,8 +76,6 @@ class MainViewViewModel: ObservableObject {
         }
     }
     
-    @Published var selectedTeam1Profile: String = "team1"
-    @Published var selectedTeam2Profile: String = "team1"
     
     var lastProcessedCommand = ""
     
@@ -138,6 +136,12 @@ class MainViewViewModel: ObservableObject {
             self.currentNumberOfServes = 0
         }
         
+        
+        
+        
+        
+        
+        
         changeScreenMode(screenMode: 1)
         
     }
@@ -161,6 +165,7 @@ class MainViewViewModel: ObservableObject {
     func resetScore() {
         team1Score = 0
         team2Score = 0
+        currentNumberOfServes = 0
     }
     
     
