@@ -46,19 +46,18 @@ struct SettingsView: View {
                                 .foregroundColor(Color.black)
                                 .padding()
                         }
-                        .alert("Set Game Point", isPresented: $isGamePointEditing) {
-                            TextField("Current Game Point: \(viewModel.gamePoint)", text: $newGamePoint)
-                                .keyboardType(.numberPad) // Numeric keyboard
-                                .padding()
-                            Button("Save") {
-                                if !newGamePoint.isEmpty || !(Int(newGamePoint) ?? 21 <= viewModel.team1Score) || !(Int(newGamePoint) ?? 21 <= viewModel.team2Score) {
-                                    viewModel.gamePoint = Int(newGamePoint) ?? 21
-                                }
+                        
+                    }
+                    .alert("Set Game Point", isPresented: $isGamePointEditing) {
+                        TextField("Current Game Point: \(viewModel.gamePoint)", text: $newGamePoint)
+                            .keyboardType(.numberPad) // Numeric keyboard
+                            .padding()
+                        Button("Save") {
+                            if !newGamePoint.isEmpty || !(Int(newGamePoint) ?? 21 <= viewModel.team1Score) || !(Int(newGamePoint) ?? 21 <= viewModel.team2Score) {
+                                viewModel.gamePoint = Int(newGamePoint) ?? 21
                             }
-                            Button("Cancel", role: .cancel) { }
                         }
-                        
-                        
+                        Button("Cancel", role: .cancel) { }
                     }
                     
                     Divider()
@@ -151,22 +150,22 @@ struct SettingsView: View {
                                 .foregroundColor(Color.black)
                                 .padding()
                         }
-                        .alert("Set Number of Serves", isPresented: $isServerNumberEditing) {
-                            TextField("Current Number of Serves: \(viewModel.servesPerServer)", text: $newServerNumber)
-                                .keyboardType(.numberPad) // Numeric keyboard
-                                .padding()
-                            Button("Save") {
-                                if !newServerNumber.isEmpty && Int(newServerNumber) ?? 2 > 0 {
-                                    viewModel.servesPerServer = Int(newServerNumber) ?? 2
-                                }
-                            }
-                            Button("Cancel", role: .cancel) { }
-                        }
                         
                         
                     }
                     
                     Divider()
+                }
+                .alert("Set Number of Serves", isPresented: $isServerNumberEditing) {
+                    TextField("Current Number of Serves: \(viewModel.servesPerServer)", text: $newServerNumber)
+                        .keyboardType(.numberPad) // Numeric keyboard
+                        .padding()
+                    Button("Save") {
+                        if !newServerNumber.isEmpty && Int(newServerNumber) ?? 2 > 0 {
+                            viewModel.servesPerServer = Int(newServerNumber) ?? 2
+                        }
+                    }
+                    Button("Cancel", role: .cancel) { }
                 }
                 
                     

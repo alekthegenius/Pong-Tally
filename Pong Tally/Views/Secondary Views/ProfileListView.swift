@@ -86,6 +86,7 @@ struct ProfileListView: View {
                     
                     
                 }
+                .scrollContentBackground(.hidden)
                 .listStyle(.automatic)
                 .alert("Change Profile Name", isPresented: $isTitleEditing) {
                     TextField("Enter Profile Name", text: $newProfileName)
