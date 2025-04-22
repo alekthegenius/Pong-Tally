@@ -15,48 +15,130 @@ class MainViewViewModel: ObservableObject {
     
     @Published var team1Score: Int = 0
     @Published var team2Score: Int = 0
-    @Published var team1Name: String = "Team 1"
-    @Published var team2Name: String = "Team 2"
+    @Published var team1WakeWord: String = "Team 1"
+    @Published var team2WakeWord: String = "Team 2"
+    
+    @Published var team1Name: String = ""
+    @Published var team2Name: String = ""
     
     @Published var screenActivityMode: Int = 1
     
-    @Published var team1Color: Color = Color(UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0))
-    @Published var team2Color: Color = Color(UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0))
+    @Published var gamePoint: Int {
+        didSet {
+            UserDefaults.standard.set(gamePoint, forKey: "gamePoint")
+        }
+    }
     
+    @Published var gameOver: Bool {
+       didSet {
+           UserDefaults.standard.set(gameOver, forKey: "gameOver")
+       }
+   }
     
-    @Published var gamePoint: Int = 11
-    @Published var gameOver: Bool = false
+    @Published var winByTwo: Bool {
+        didSet {
+            UserDefaults.standard.set(winByTwo, forKey: "winByTwo")
+        }
+    }
     
-    @Published var winByTwo: Bool = true
+    @Published var gameWinner: String {
+        didSet {
+            UserDefaults.standard.set(gameWinner, forKey: "gameWinner")
+        }
+    }
     
     @Published var speechRecognitionStatus: Bool = false
     @Published var speechRecognitionAuthorized: Bool = false
     @Published var microphoneAuthorized: Bool = false
     
     
-    @Published var gameWinner: Int = 0
+    @Published var servingTeam: Int {
+       didSet {
+           UserDefaults.standard.set(servingTeam, forKey: "servingTeam")
+       }
+   }
     
-    @Published var showTeam1BackButton = false
-    @Published var showTeam2BackButton = false
+    @Published var servingIndicators: Bool {
+        didSet {
+            UserDefaults.standard.set(servingIndicators, forKey: "servingIndicators")
+        }
+    }
     
-    @Published var text1Color: Color = Color(UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0))
-    @Published var text2Color: Color = Color(UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0))
+    @Published var servesPerServer: Int {
+        didSet {
+            UserDefaults.standard.set(servesPerServer, forKey: "servesPerServer")
+        }
+    }
     
+    @Published var currentNumberOfServes: Int {
+        didSet {
+            UserDefaults.standard.set(currentNumberOfServes, forKey: "currentNumberOfServes")
+        }
+    }
     
-    
-    @Published var servingTeam: Int = 1
-    @Published var servingIndicators: Bool = true
-    @Published var servesPerServer: Int = 2
-    @Published var currentNumberOfServes: Int = 0
+    @Published var selectedTeam1Profile: String = "team1"
+    @Published var selectedTeam2Profile: String = "team1"
     
     var lastProcessedCommand = ""
     
     
     
     init() {
+        
+        
+        
+        
+        if UserDefaults.standard.object(forKey: "gamePoint") != nil {
+            self.gamePoint = UserDefaults.standard.integer(forKey: "gamePoint")
+        } else {
+            self.gamePoint = 11
+        }
+        
+        if UserDefaults.standard.object(forKey: "gameOver") != nil {
+            self.gameOver = UserDefaults.standard.bool(forKey: "gameOver")
+        } else {
+            self.gameOver = false
+        }
+        
+        if UserDefaults.standard.object(forKey: "winByTwo") != nil {
+            self.winByTwo = UserDefaults.standard.bool(forKey: "winByTwo")
+        } else {
+            self.winByTwo = true
+        }
+        
+        if UserDefaults.standard.object(forKey: "gameWinner") != nil {
+            self.gameWinner = UserDefaults.standard.string(forKey: "gameWinner") ?? "Failed To Retrieve Name"
+        } else {
+            self.gameWinner = ""
+        }
+        
+        
+        
+        if UserDefaults.standard.object(forKey: "servingTeam") != nil {
+            self.servingTeam = UserDefaults.standard.integer(forKey: "servingTeam")
+        } else {
+            self.servingTeam = 1
+        }
+        
+        if UserDefaults.standard.object(forKey: "servingIndicators") != nil {
+            self.servingIndicators = UserDefaults.standard.bool(forKey: "servingIndicators")
+        } else {
+            self.servingIndicators = true
+        }
+        
+        if UserDefaults.standard.object(forKey: "servesPerServer") != nil {
+            self.servesPerServer = UserDefaults.standard.integer(forKey: "servesPerServer")
+        } else {
+            self.servesPerServer = 2
+        }
+        
+        if UserDefaults.standard.object(forKey: "currentNumberOfServes") != nil {
+            self.currentNumberOfServes = UserDefaults.standard.integer(forKey: "currentNumberOfServes")
+        } else {
+            self.currentNumberOfServes = 0
+        }
+        
         changeScreenMode(screenMode: 1)
-        
-        
         
     }
     
@@ -112,23 +194,15 @@ class MainViewViewModel: ObservableObject {
             }
         }
         
-        if team1Score > 0 {
-            showTeam1BackButton = true
-        }
-        
         if (team1Score >= gamePoint){
             if winByTwo && ((team1Score - team2Score) >= 2){
                 
-                gameWinner = 1
-                showTeam1BackButton = false
-                showTeam2BackButton = false
+                gameWinner = team1Name
                 gameOver = true
                 
                 currentNumberOfServes = 0
             } else if !winByTwo {
-                gameWinner = 1
-                showTeam1BackButton = false
-                showTeam2BackButton = false
+                gameWinner = team1Name
                 gameOver = true
                 currentNumberOfServes = 0
             }
@@ -149,12 +223,6 @@ class MainViewViewModel: ObservableObject {
                 servingTeam = servingTeam == 1 ? 2 : 1
                 currentNumberOfServes = servesPerServer - 1
             }
-        } else {
-            showTeam1BackButton = false
-        }
-        
-        if team1Score == 0 {
-            showTeam1BackButton = false
         }
     }
     
@@ -188,22 +256,14 @@ class MainViewViewModel: ObservableObject {
             }
         }
         
-        if team2Score > 0 {
-            showTeam2BackButton = true
-        }
-        
         if (team2Score >= gamePoint){
             if winByTwo && ((team2Score - team1Score) >= 2){
                 
-                gameWinner = 2
-                showTeam1BackButton = false
-                showTeam2BackButton = false
+                gameWinner = team2Name
                 gameOver = true
                 currentNumberOfServes = 0
             } else if !winByTwo {
-                gameWinner = 2
-                showTeam1BackButton = false
-                showTeam2BackButton = false
+                gameWinner = team2Name
                 gameOver = true
                 currentNumberOfServes = 0
             }
@@ -225,21 +285,15 @@ class MainViewViewModel: ObservableObject {
                 servingTeam = servingTeam == 1 ? 2 : 1
                 currentNumberOfServes = servesPerServer - 1
             }
-        } else {
-            showTeam2BackButton = false
-        }
-        
-        if team2Score == 0 {
-            showTeam2BackButton = false
         }
     }
     
     
     func setTeamName (team: Int, name: String) {
         if team == 1 {
-            team1Name = name
+            team1WakeWord = name
         } else {
-            team2Name = name
+            team2WakeWord = name
         }
     }
     
@@ -262,8 +316,8 @@ class MainViewViewModel: ObservableObject {
         
         
         
-        let convertedTeam1 = convertDigitsToWords(team1Name).lowercased()
-        let convertedTeam2 = convertDigitsToWords(team2Name).lowercased()
+        let convertedTeam1 = convertDigitsToWords(team1WakeWord).lowercased()
+        let convertedTeam2 = convertDigitsToWords(team2WakeWord).lowercased()
         
         //print(convertedTeam1)
         //print(convertedTeam2)
@@ -285,12 +339,10 @@ class MainViewViewModel: ObservableObject {
             if (team2Score >= gamePoint){
                 if winByTwo && ((team2Score - team1Score) >= 2){
                     
-                    gameWinner = 2
+                    gameWinner = team2Name
                     gameOver = true
-                    showTeam1BackButton = false
-                    showTeam2BackButton = false
                 } else if !winByTwo {
-                    gameWinner = 2
+                    gameWinner = team2Name
                     gameOver = true
                 }
             }
