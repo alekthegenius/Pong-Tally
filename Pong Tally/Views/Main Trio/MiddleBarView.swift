@@ -38,7 +38,6 @@ struct MiddleBarView: View {
             
             HStack() { // Align Menu Bar Items
                 
-                Spacer()
                 
                 Button { // Help Menu Buttons
                     isHelpMenuShown = true
@@ -58,6 +57,7 @@ struct MiddleBarView: View {
                     
                 }
                 .frame(width: 60, height: 35)
+                .padding(.leading, 20)
                 .sheet(isPresented: $isHelpMenuShown) {
                     HelpMenuView()
                 }
@@ -155,8 +155,7 @@ struct MiddleBarView: View {
                     }
                     
                 }
-                
-                Spacer()
+                .padding(.trailing, 20)
                 
             }
             
