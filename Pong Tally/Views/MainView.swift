@@ -37,6 +37,7 @@ struct MainView: View {
     @State private var showingMicPrivacyAlert: Bool = false
     
     
+    
     @State private var isRecording: Bool = false
     
     @AppStorage("selectedTeam1Profile") private var selectedProfileTeam1: String = "team1"
@@ -129,7 +130,7 @@ struct MainView: View {
                   )
               }
             .sheet(isPresented: $viewModel.gameOver) {
-                GameOverView(winningTeamName: "Team 1")
+                GameOverView(winningTeamName: viewModel.gameWinner, losingTeamName: viewModel.gameLoser)
                     .environmentObject(viewModel)
             }
             .onChange(of: speechRecognizer.transcript) {
@@ -137,9 +138,11 @@ struct MainView: View {
             }
             .sheet(isPresented: $isShowingProfileMenuForTeam1) {
                 ProfileListView(currentUser: $selectedProfileTeam1, secondaryUser: $selectedProfileTeam2, resetScore: viewModel.resetScore)
+                    .environmentObject(viewModel)
             }
             .sheet(isPresented: $isShowingProfileMenuForTeam2) {
                 ProfileListView(currentUser: $selectedProfileTeam2, secondaryUser: $selectedProfileTeam1, resetScore: viewModel.resetScore)
+                    .environmentObject(viewModel)
                     
             }
             

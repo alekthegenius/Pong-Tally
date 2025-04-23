@@ -47,6 +47,12 @@ class MainViewViewModel: ObservableObject {
         }
     }
     
+    @Published var gameLoser: String {
+        didSet {
+            UserDefaults.standard.set(gameLoser, forKey: "gameLoser")
+        }
+    }
+    
     @Published var speechRecognitionStatus: Bool = false
     @Published var speechRecognitionAuthorized: Bool = false
     @Published var microphoneAuthorized: Bool = false
@@ -105,10 +111,17 @@ class MainViewViewModel: ObservableObject {
         }
         
         if UserDefaults.standard.object(forKey: "gameWinner") != nil {
-            self.gameWinner = UserDefaults.standard.string(forKey: "gameWinner") ?? "Failed To Retrieve Name"
+            self.gameWinner = UserDefaults.standard.string(forKey: "gameWinner") ?? "Failed To Retrieve Winning Team's Name"
         } else {
             self.gameWinner = ""
         }
+        
+        if UserDefaults.standard.object(forKey: "gameLoser") != nil {
+            self.gameLoser = UserDefaults.standard.string(forKey: "gameLoser") ?? "Failed To Retrieve Losing Team's Name"
+        } else {
+            self.gameLoser = ""
+        }
+        
         
         
         
@@ -203,11 +216,13 @@ class MainViewViewModel: ObservableObject {
             if winByTwo && ((team1Score - team2Score) >= 2){
                 
                 gameWinner = team1Name
+                gameLoser = team2Name
                 gameOver = true
                 
                 currentNumberOfServes = 0
             } else if !winByTwo {
                 gameWinner = team1Name
+                gameLoser = team2Name
                 gameOver = true
                 currentNumberOfServes = 0
             }
@@ -265,10 +280,12 @@ class MainViewViewModel: ObservableObject {
             if winByTwo && ((team2Score - team1Score) >= 2){
                 
                 gameWinner = team2Name
+                gameLoser = team1Name
                 gameOver = true
                 currentNumberOfServes = 0
             } else if !winByTwo {
                 gameWinner = team2Name
+                gameLoser = team1Name
                 gameOver = true
                 currentNumberOfServes = 0
             }
@@ -333,24 +350,12 @@ class MainViewViewModel: ObservableObject {
 
         switch newCommand.lowercased() {
         case let str where str.contains("\(convertedTeam1) score"):
-            
             self.increaseTeam1()
-            
             lastProcessedCommand = text
             
             
         case let str where str.contains("\(convertedTeam2) score"):
             self.increaseTeam2()
-            if (team2Score >= gamePoint){
-                if winByTwo && ((team2Score - team1Score) >= 2){
-                    
-                    gameWinner = team2Name
-                    gameOver = true
-                } else if !winByTwo {
-                    gameWinner = team2Name
-                    gameOver = true
-                }
-            }
             lastProcessedCommand = text
             
             

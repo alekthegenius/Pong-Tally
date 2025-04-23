@@ -11,6 +11,7 @@ import SwiftData
 struct ProfileListView: View {
     @Query var profiles: [Profile]
     
+    @EnvironmentObject var viewModel: MainViewViewModel
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) var modelContext
     
@@ -27,11 +28,17 @@ struct ProfileListView: View {
     @State private var profileBeingEdited: Profile? = nil
     
     var activeProfiles: [Profile] {
-        profiles.filter { $0.id == currentUser || $0.id == secondaryUser }
+        profiles
+            .filter { $0.id == currentUser || $0.id == secondaryUser }
+            .sorted {
+                $0.name == viewModel.team1Name && $1.name != viewModel.team1Name
+            }
     }
 
     var otherProfiles: [Profile] {
-        profiles.filter { $0.id != currentUser && $0.id != secondaryUser }
+        profiles
+            .filter { $0.id != currentUser && $0.id != secondaryUser }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
     
     var body: some View {
@@ -87,7 +94,6 @@ struct ProfileListView: View {
                     
                 }
                 .scrollContentBackground(.hidden)
-                .listStyle(.automatic)
                 .alert("Change Profile Name", isPresented: $isTitleEditing) {
                     TextField("Enter Profile Name", text: $newProfileName)
                         Button("Save") {
@@ -134,8 +140,16 @@ struct ProfileListView: View {
         HStack {
             Button {
                 if !inUse && secondaryUser != profile.id {
+                    if viewModel.team1Name == profiles.first(where: { $0.id == currentUser })?.name {
+                        viewModel.team1Name = profile.name
+                    } else {
+                        viewModel.team2Name = profile.name
+                    }
+                    
                     currentUser = profile.id
+                    profile.currentScore = 0
                     resetScore()
+                    
                 }
             } label: {
                 HStack {

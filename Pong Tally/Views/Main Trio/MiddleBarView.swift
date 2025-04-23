@@ -23,6 +23,7 @@ struct MiddleBarView: View {
     
     @Binding var showingMicPrivacyAlert: Bool
     
+    @State private var isShowingHistoryView: Bool = false
     
     @Binding var isRecording: Bool
     
@@ -46,16 +47,17 @@ struct MiddleBarView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(.clear)
                             .strokeBorder(.black, lineWidth: 2)
-                            .frame(width: 100, height: 40)
+                            
                         
-                        Text("PongTally")
-                            .font(.system(size: 17))
+                        Text("Help")
+                            .font(.system(size: 15))
                             .foregroundColor(Color.black)
                             .fontWeight(.bold)
                             
                     }
                     
                 }
+                .frame(width: 60, height: 35)
                 .sheet(isPresented: $isHelpMenuShown) {
                     HelpMenuView()
                 }
@@ -72,6 +74,21 @@ struct MiddleBarView: View {
                 }
                 .sheet(isPresented: $isSettingsMenuShown) {
                     SettingsView(isGamePointEditing: $isGamePointEditing, newGamePoint: $newGamePoint, isServerNumberEditing: $isServerNumberEditing, newServerNumber: $newServerNumber, showDictationText: $showDictationText)
+                        .environmentObject(viewModel)
+                }
+                
+                Spacer()
+                
+                Button { // Settings Button
+                    isShowingHistoryView = true
+                } label: {
+                    Image(systemName: "list.bullet.clipboard")
+                        .font(.system(size: 25))
+                        .foregroundColor(Color.black)
+
+                }
+                .sheet(isPresented: $isShowingHistoryView) {
+                    HistoryView()
                         .environmentObject(viewModel)
                 }
                 

@@ -6,14 +6,20 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct GameOverView: View {
     @EnvironmentObject var viewModel: MainViewViewModel
+    
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) var modelContext
+    
+    @Query var games: [Game]
     
     @State private var confettiCounter = 0
     
-    var winningTeamName: String?
+    var winningTeamName: String
+    var losingTeamName: String
     
     var body: some View {
         ZStack {
@@ -27,10 +33,19 @@ struct GameOverView: View {
                     .foregroundStyle(.black)
                 
                 
-                Text("Team: \(viewModel.gameWinner) Won")
+                Text("Team: \(winningTeamName) Won")
                     .font(.system(size: 20))
                     .foregroundStyle(.black)
                     
+                if winningTeamName == viewModel.team1Name {
+                    Text("\(viewModel.team1Score) - \(viewModel.team2Score)")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.black)
+                } else {
+                    Text("\(viewModel.team2Score) - \(viewModel.team1Score)")
+                        .font(.system(size: 20))
+                        .foregroundStyle(.black)
+                }
                 
                 Button {
                     viewModel.resetScore()
@@ -57,16 +72,24 @@ struct GameOverView: View {
             confettiCounter += 1
         }
         .onDisappear {
+            insertGame()
             viewModel.resetScore()
         }
         .confettiCannon(trigger: $confettiCounter, num: 80)
         
+    }
+    
+    func insertGame() {
+        let newGame = Game(winningTeamName: winningTeamName, losingTeamName: losingTeamName, winningTeamScore: winningTeamName == viewModel.team1Name ? viewModel.team1Score : viewModel.team2Score, losingTeamScore: winningTeamName != viewModel.team1Name ? viewModel.team1Score : viewModel.team2Score, gameDate: .now)
+        if !games.contains(where: { $0 == newGame }) {
+            modelContext.insert(newGame)
+        }
     }
         
     
 }
 
 #Preview {
-    GameOverView(winningTeamName: "Team 1")
+    GameOverView(winningTeamName: "Team 1", losingTeamName: "Team 2")
         .environmentObject(MainViewViewModel())
 }

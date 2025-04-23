@@ -19,6 +19,6 @@ struct Pong_TallyApp: App {
         WindowGroup {
             MainView()
         }
-        .modelContainer(for: Profile.self)
+        .modelContainer(for: [Profile.self, Game.self])
     }
 }
