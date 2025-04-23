@@ -48,7 +48,6 @@ struct GameOverView: View {
                 }
                 
                 Button {
-                    viewModel.resetScore()
                     dismiss() // Close the sheet
                     
                 } label: {
@@ -80,7 +79,7 @@ struct GameOverView: View {
     }
     
     func insertGame() {
-        let newGame = Game(winningTeamName: winningTeamName, losingTeamName: losingTeamName, winningTeamScore: winningTeamName == viewModel.team1Name ? viewModel.team1Score : viewModel.team2Score, losingTeamScore: winningTeamName != viewModel.team1Name ? viewModel.team1Score : viewModel.team2Score, gameDate: .now)
+        let newGame = Game(winningTeamName: winningTeamName, losingTeamName: losingTeamName, winningTeamScore: winningTeamName == viewModel.team1Name ? viewModel.team1Score : viewModel.team2Score, losingTeamScore: winningTeamName != viewModel.team1Name ? viewModel.team1Score : viewModel.team2Score, gameDate: .now, gamePoint: viewModel.gamePoint)
         if !games.contains(where: { $0 == newGame }) {
             modelContext.insert(newGame)
         }

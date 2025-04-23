@@ -31,7 +31,7 @@ struct ProfileListView: View {
         profiles
             .filter { $0.id == currentUser || $0.id == secondaryUser }
             .sorted {
-                $0.name == viewModel.team1Name && $1.name != viewModel.team1Name
+                $0.id == currentUser && $1.id != currentUser
             }
     }
 

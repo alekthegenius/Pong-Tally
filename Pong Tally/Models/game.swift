@@ -18,13 +18,16 @@ class Game {
     var losingTeamScore: Int
     
     var gameDate: Date
+    var gamePoint: Int
     
     
-    init(winningTeamName: String = "", losingTeamName: String = "", winningTeamScore: Int = 0, losingTeamScore: Int = 0, gameDate: Date = .now) {
+    
+    init(winningTeamName: String = "", losingTeamName: String = "", winningTeamScore: Int = 0, losingTeamScore: Int = 0, gameDate: Date = .now, gamePoint: Int = 11) {
         self.winningTeamName = winningTeamName
         self.losingTeamName = losingTeamName
         self.winningTeamScore = winningTeamScore
         self.losingTeamScore = losingTeamScore
         self.gameDate = gameDate
+        self.gamePoint = gamePoint
     }
 }

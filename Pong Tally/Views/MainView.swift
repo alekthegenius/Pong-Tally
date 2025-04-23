@@ -60,6 +60,7 @@ struct MainView: View {
         
         
         ZStack { // Allows for the Use of Overlays
+            Color.white
             
             VStack() { // Aligns Main Three Elements: Top Team Board, Middle Bar, and Bottom Team Board
                 
@@ -89,13 +90,16 @@ struct MainView: View {
                         BottomScoreView(isShowingProfileMenu: $isShowingProfileMenuForTeam2, profile: selectedProfile, teamTwoScore: teamTwoScore)
                             .environmentObject(viewModel)
                     } else {
-                        Text("Profile not found")
+                        Text("Profile Not Found")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                            .padding()
                     }
                     
                 } else {
-                    Text("Loading profiles...")
+                    Text("ERROR: Profiles Not Found")
                         .font(.headline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.black)
                         .padding()
                 }
                 
@@ -105,16 +109,19 @@ struct MainView: View {
             }
             .onAppear {
                 speechRecognizer.resetTranscript()
-                let team1Starter = Profile(name: "Team 1", textColor: UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0), backgroundColor: UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0), id: "team1")
-                let team2Starter = Profile(name: "Team 2",textColor: UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0), backgroundColor: UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0), id: "team2")
-                if !profiles.contains(where: { $0.id == team1Starter.id }) {
-                    modelContext.insert(team1Starter)
-                }
                 
-                if !profiles.contains(where: { $0.id == team2Starter.id }) {
-                    modelContext.insert(team2Starter)
+                if profiles.count < 2 {
+                    let team1Starter = Profile(name: "Team 1", textColor: UIColor(red: 27/255, green: 93/255, blue: 215/255, alpha: 1.0), backgroundColor: UIColor(red: 209/255, green: 253/255, blue: 255/255, alpha: 1.0), id: "team1")
+                    let team2Starter = Profile(name: "Team 2",textColor: UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0), backgroundColor: UIColor(red: 255/255, green: 31/255, blue: 86/255, alpha: 1.0), id: "team2")
+                    
+                    if !profiles.contains(where: { $0.id == team1Starter.id }) {
+                        modelContext.insert(team1Starter)
+                    }
+                    
+                    if !profiles.contains(where: { $0.id == team2Starter.id }) {
+                        modelContext.insert(team2Starter)
+                    }
                 }
-                print("Profiles at appear:", profiles)
             }
             .background(.white)
             .alert(isPresented: $showingMicPrivacyAlert) {

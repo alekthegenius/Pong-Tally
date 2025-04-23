@@ -20,7 +20,7 @@ struct HistoryView: View {
             VStack{
                 List {
                     if games.isEmpty {
-                        Text("Start a Game to Start Tallying!")
+                        Text("Finish a Game to Start Tallying!")
                             .font(.headline)
                     } else {
                         ForEach(games) { game in
@@ -29,6 +29,9 @@ struct HistoryView: View {
                                     Text("\(game.winningTeamName): \(game.winningTeamScore) - \(game.losingTeamName): \(game.losingTeamScore)")
                                         .font(.headline)
                                     Spacer()
+                                    
+                                    Text("Game Point: \(game.gamePoint)")
+                                        .font(.subheadline)
                                 }
                                 Text(game.gameDate.formatted(date: .abbreviated, time: .shortened))
                                     .font(.subheadline)

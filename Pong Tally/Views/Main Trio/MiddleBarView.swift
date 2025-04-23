@@ -50,7 +50,7 @@ struct MiddleBarView: View {
                             
                         
                         Text("Help")
-                            .font(.system(size: 15))
+                            .font(.system(size: 17))
                             .foregroundColor(Color.black)
                             .fontWeight(.bold)
                             
