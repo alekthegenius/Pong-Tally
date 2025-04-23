@@ -49,7 +49,7 @@ struct HelpMenuView: View {
                             Spacer()
                         }
                         
-                        
+
                         
                         HStack {
                                 Image(systemName: "gearshape")
@@ -57,6 +57,20 @@ struct HelpMenuView: View {
                                 .foregroundStyle(.black)
                      
                                 Text("Open up the Settings Menu")
+                                    .font(.system(size: 15))
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundStyle(.black)
+                           
+                            }
+                            
+                        Divider()
+                        
+                        HStack {
+                                Image(systemName: "list.bullet.clipboard")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.black)
+                     
+                                Text("Opens A History of Games")
                                     .font(.system(size: 15))
                                     .multilineTextAlignment(.leading)
                                     .foregroundStyle(.black)
@@ -233,9 +247,13 @@ struct HelpMenuView: View {
                 Spacer()
                 
                 Divider()
-                Text("Written From Texas with ❤️, © 2025 Alek Vasek")
-                    .font(.caption)
-                    .foregroundStyle(.gray)
+                ScrollView(.horizontal) {
+                    Text("Written From Texas with ❤️, © 2025 Alek Vasek                                                                                                                                                                                                                                                                                                                                                         Never                                                                                                                                                                            Gonna                                                                                                                                                                            Give                                                                                                                                                                            You                                                                                                                                                                            Up 😉                                   ")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
+                .scrollIndicators(.never)
+                .frame(width: 271, height: 30)
                         
                 
                 

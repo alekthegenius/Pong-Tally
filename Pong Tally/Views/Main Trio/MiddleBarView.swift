@@ -56,7 +56,7 @@ struct MiddleBarView: View {
                     }
                     
                 }
-                .frame(width: 60, height: 35)
+                .frame(width: 65, height: 35)
                 .padding(.leading, 20)
                 .sheet(isPresented: $isHelpMenuShown) {
                     HelpMenuView()
