@@ -61,3 +61,7 @@ final class UIColorValueTransformer: ValueTransformer {
         }
     }
 }
+
+public enum TeamSlot {
+    case team1, team2
+}

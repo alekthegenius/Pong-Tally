@@ -19,6 +19,8 @@ struct ProfileListView: View {
     @Binding var currentUser: String
     @Binding var secondaryUser: String
     
+    var teamSlot: TeamSlot
+    
     var resetScore: () -> Void
     
     @State private var editMode = EditMode.inactive
@@ -98,6 +100,22 @@ struct ProfileListView: View {
                     TextField("Enter Profile Name", text: $newProfileName)
                         Button("Save") {
                             if let profile = profileBeingEdited, !newProfileName.isEmpty {
+                                if profile.id == currentUser {
+                                    switch teamSlot {
+                                    case .team1:
+                                        viewModel.team1Name = newProfileName
+                                    case .team2:
+                                        viewModel.team2Name = newProfileName
+                                    }
+                                } else if profile.id == secondaryUser {
+                                    switch teamSlot {
+                                    case .team1:
+                                        viewModel.team2Name = newProfileName
+                                    case .team2:
+                                        viewModel.team1Name = newProfileName
+                                    }
+                                }
+                                
                                 profile.name = newProfileName
                                 profileBeingEdited = nil
                             }
@@ -140,9 +158,10 @@ struct ProfileListView: View {
         HStack {
             Button {
                 if !inUse && secondaryUser != profile.id {
-                    if viewModel.team1Name == profiles.first(where: { $0.id == currentUser })?.name {
+                    switch teamSlot {
+                    case .team1:
                         viewModel.team1Name = profile.name
-                    } else {
+                    case .team2:
                         viewModel.team2Name = profile.name
                     }
                     
@@ -201,8 +220,9 @@ struct ProfileListView: View {
             modelContext.delete(profile)
         }
     }
+    
 }
 
 #Preview {
-    ProfileListView(currentUser: .constant(""), secondaryUser: .constant(""), resetScore: {})
+    ProfileListView(currentUser: .constant(""), secondaryUser: .constant(""), teamSlot: TeamSlot.team1, resetScore: {})
 }

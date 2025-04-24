@@ -144,11 +144,11 @@ struct MainView: View {
                 viewModel.processCommand(speechRecognizer.transcript)
             }
             .sheet(isPresented: $isShowingProfileMenuForTeam1) {
-                ProfileListView(currentUser: $selectedProfileTeam1, secondaryUser: $selectedProfileTeam2, resetScore: viewModel.resetScore)
+                ProfileListView(currentUser: $selectedProfileTeam1, secondaryUser: $selectedProfileTeam2, teamSlot: TeamSlot.team1, resetScore: viewModel.resetScore)
                     .environmentObject(viewModel)
             }
             .sheet(isPresented: $isShowingProfileMenuForTeam2) {
-                ProfileListView(currentUser: $selectedProfileTeam2, secondaryUser: $selectedProfileTeam1, resetScore: viewModel.resetScore)
+                ProfileListView(currentUser: $selectedProfileTeam2, secondaryUser: $selectedProfileTeam1, teamSlot: TeamSlot.team2, resetScore: viewModel.resetScore)
                     .environmentObject(viewModel)
                     
             }
